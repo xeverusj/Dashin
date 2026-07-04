@@ -386,7 +386,7 @@ def _render_clients(org_id: int, user_id: int):
                         {c['campaign_count']} campaigns ·
                         {c['portal_users']} portal users
                     </div>
-                    {f'<div style="font-size:12px;color:#888;margin-top:4px;">{c["icp_notes"][:80]}…</div>' if c.get('icp_notes') else ''}
+                    {f'<div style="font-size:12px;color:var(--text-3);margin-top:4px;">{c["icp_notes"][:80]}…</div>' if c.get('icp_notes') else ''}
                 </div>
             </div>
         </div>
@@ -517,7 +517,7 @@ def _render_invites(org_id: int, user_id: int):
                     {inv.get('role','client_user').replace('_',' ').title()}
                 </div>
                 <div class="invite-token">{url}</div>
-                <div style="font-size:11px;color:#888;margin-top:6px;">
+                <div style="font-size:11px;color:var(--text-3);margin-top:6px;">
                     Created by {inv.get('created_by_name','?')} ·
                     Expires {(inv.get('expires_at',''))[:10]}
                     {f'· Pre-filled: {inv["email"]}' if inv.get('email') else ''}

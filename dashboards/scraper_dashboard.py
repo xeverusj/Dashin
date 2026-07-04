@@ -189,7 +189,7 @@ def _render_learning_result_card(log_content: str):
         )
     elif is_new_site and domain_match:
         selector_type = "STABLE" if "data-test" in log_content else "FRAGILE"
-        colour = "#ecf7f0" if selector_type == "STABLE" else "#fff8ec"
+        colour = "var(--success-bg)" if selector_type == "STABLE" else "var(--surface-2)"
         st.markdown(
             f'<div style="background:{colour};border-radius:8px;padding:14px 18px;'
             f'font-size:13px;margin:12px 0">'
@@ -201,7 +201,7 @@ def _render_learning_result_card(log_content: str):
         )
     elif used_cache and domain_match:
         st.markdown(
-            f'<div style="background:#f4f4f4;border-radius:8px;padding:14px 18px;'
+            f'<div style="background:var(--surface-2);border-radius:8px;padding:14px 18px;'
             f'font-size:13px;margin:12px 0">'
             f'✓ Used <strong>cached pattern</strong> for {domain_match}'
             f'</div>',
@@ -215,7 +215,7 @@ def _render_learning_result_card(log_content: str):
         if expiring:
             domains = ", ".join(p["domain"] for p in expiring[:3])
             st.markdown(
-                f'<div style="background:#fff8ec;border-radius:8px;padding:14px 18px;'
+                f'<div style="background:var(--surface-2);border-radius:8px;padding:14px 18px;'
                 f'font-size:13px;margin:8px 0">'
                 f'⚠️ Cached pattern(s) expiring soon (fragile selectors): {domains}'
                 f'</div>',
@@ -465,6 +465,7 @@ def render(user: dict = None):
                 notes_input = st.text_input("Notes (optional)",
                                             placeholder="VP+ roles only, filter by UK")
 
+            cdp_url = ""
             if scraper["key"] == "clutch":
                 max_pages = st.slider("Max pages to scrape", 1, 50, 20)
                 st.caption(f"Will scrape up to ~{max_pages * 25} companies")
@@ -472,13 +473,23 @@ def render(user: dict = None):
             else:
                 max_pages = 20
                 mobile_mode = st.checkbox("📱 Mobile emulation mode")
+                with st.expander("🖥️ Advanced: attach to an emulator / device (app-only events)"):
+                    st.caption(
+                        "For events that exist **only** as a native app. Run the app in an "
+                        "Android emulator (or device) with Chrome remote debugging enabled, "
+                        "then paste its debug URL below. The scraper attaches and captures "
+                        "the app's attendee API directly — no proxy or cert install needed. "
+                        "Leave blank for normal web scraping."
+                    )
+                    cdp_url = st.text_input("Emulator/device debug URL",
+                                            placeholder="http://127.0.0.1:9222").strip()
 
             c1, c2 = st.columns([1, 4])
             with c1:
                 go = st.button("🚀 Launch", type="primary", use_container_width=True)
             with c2:
                 st.markdown(
-                    '<p style="font-size:12px;color:#bbb;padding-top:12px">'
+                    '<p style="font-size:12px;color:var(--text-3);padding-top:12px">'
                     "Opens a browser window — login &amp; click the purple START button to begin.</p>",
                     unsafe_allow_html=True,
                 )
@@ -492,6 +503,7 @@ def render(user: dict = None):
             notes_input = ""
             max_pages = 20
             mobile_mode = False
+            cdp_url = ""
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -518,6 +530,8 @@ def render(user: dict = None):
                     cmd = [sys.executable, str(script_path), url.strip()]
                     if mobile_mode:
                         cmd.append("--mobile")
+                    if cdp_url:
+                        cmd += ["--cdp", cdp_url]
 
                 # Launch scraper as a visible subprocess.
                 # headless=False in the scraper opens a visible Chromium window.
@@ -591,7 +605,7 @@ def render(user: dict = None):
 
     sessions = _get_recent_sessions(org_id, 15)
     if not sessions:
-        st.markdown('<p style="color:#aaa;font-size:13px;padding:16px 0">No sessions yet.</p>',
+        st.markdown('<p style="color:var(--text-3);font-size:13px;padding:16px 0">No sessions yet.</p>',
                     unsafe_allow_html=True)
     else:
         rows_html = ""
@@ -604,12 +618,12 @@ def render(user: dict = None):
             rows_html += f"""<tr>
               <td class="n">{evt}</td><td>{cat}</td>
               <td>{sess.get('leads_found', 0)}</td>
-              <td style="color:#3d9e6a;font-weight:600">{sess.get('leads_new', 0)}</td>
-              <td style="color:#aaa">{sess.get('leads_dupes', 0)}</td>
+              <td style="color:var(--success);font-weight:600">{sess.get('leads_new', 0)}</td>
+              <td style="color:var(--text-3)">{sess.get('leads_dupes', 0)}</td>
               <td>{badge(sess.get('status', 'running'))}</td>
-              <td style="color:#bbb;font-size:11px">{pat}</td>
-              <td style="color:#bbb;font-size:11px">${ai:.4f}</td>
-              <td style="color:#bbb;font-size:11px">{dt}</td>
+              <td style="color:var(--text-3);font-size:11px">{pat}</td>
+              <td style="color:var(--text-3);font-size:11px">${ai:.4f}</td>
+              <td style="color:var(--text-3);font-size:11px">{dt}</td>
             </tr>"""
 
         st.markdown(f"""

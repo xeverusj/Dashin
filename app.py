@@ -94,8 +94,8 @@ st.markdown("""
 
 /* ── Sidebar shell ───────────────────────────────────────────────────────── */
 section[data-testid="stSidebar"] {
-    background: rgba(255,255,255,0.85) !important;
-    border-right: 1px solid rgba(122,116,134,0.12) !important;
+    background: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
     backdrop-filter: blur(20px) !important;
     min-width: 240px !important;
     max-width: 240px !important;
@@ -106,9 +106,9 @@ section[data-testid="stSidebar"] > div:first-child {
 section[data-testid="stSidebar"] label,
 section[data-testid="stSidebar"] p,
 section[data-testid="stSidebar"] span {
-    color: #494455 !important;
+    color: var(--text-2) !important;
     font-size: 12px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
 }
 section[data-testid="stSidebar"] .stRadio > div { gap: 1px !important; }
 section[data-testid="stSidebar"] .stRadio label {
@@ -117,35 +117,35 @@ section[data-testid="stSidebar"] .stRadio label {
     padding: 9px 14px !important;
     width: 100% !important;
     cursor: pointer !important;
-    color: #7a7486 !important;
+    color: var(--text-3) !important;
     font-size: 12px !important;
     font-weight: 600 !important;
     transition: all .15s !important;
 }
 section[data-testid="stSidebar"] .stRadio label:hover {
-    background: #f3f4f5 !important;
-    color: #191c1d !important;
+    background: var(--surface-2) !important;
+    color: var(--text-1) !important;
 }
 section[data-testid="stSidebar"] .stRadio label[data-checked="true"],
 section[data-testid="stSidebar"] .stRadio input:checked + div {
-    background: rgba(84,22,201,0.08) !important;
-    color: #5416c9 !important;
-    border-right: 2px solid #5416c9 !important;
+    background: var(--accent-bg) !important;
+    color: var(--accent) !important;
+    border-right: 2px solid var(--accent) !important;
 }
 
 /* ── Sidebar components ──────────────────────────────────────────────────── */
 .sb-logo-img {
     padding-bottom: 16px;
     margin-bottom: 12px;
-    border-bottom: 1px solid rgba(122,116,134,0.15);
+    border-bottom: 1px solid var(--border);
 }
 .sb-user {
     font-size: 11px;
-    color: #7a7486;
+    color: var(--text-3);
     margin-bottom: 16px;
     line-height: 1.7;
 }
-.sb-user strong { color: #191c1d; font-weight: 700; }
+.sb-user strong { color: var(--text-1); font-weight: 700; }
 .sb-role {
     display: inline-block;
     padding: 2px 8px;
@@ -156,23 +156,23 @@ section[data-testid="stSidebar"] .stRadio input:checked + div {
     text-transform: uppercase;
     margin-top: 2px;
 }
-.sb-role-super_admin      { background:rgba(84,22,201,.10);  color:#5416c9; }
-.sb-role-org_admin        { background:rgba(84,22,201,.08);  color:#6a39de; }
-.sb-role-manager          { background:rgba(84,22,201,.08);  color:#5416c9; }
-.sb-role-research_manager { background:rgba(84,22,201,.08);  color:#5416c9; }
+.sb-role-super_admin      { background:var(--accent-bg);  color:var(--accent); }
+.sb-role-org_admin        { background:var(--accent-bg);  color:var(--accent-light); }
+.sb-role-manager          { background:var(--accent-bg);  color:var(--accent); }
+.sb-role-research_manager { background:var(--accent-bg);  color:var(--accent); }
 .sb-role-campaign_manager { background:rgba(180,83,9,.10);   color:#b45309; }
 .sb-role-researcher       { background:rgba(22,163,74,.10);  color:#16a34a; }
 .sb-role-client_admin     { background:rgba(186,26,26,.10);  color:#ba1a1a; }
-.sb-role-client_user      { background:rgba(122,116,134,.10);color:#7a7486; }
+.sb-role-client_user      { background:rgba(122,116,134,.10);color:var(--text-3); }
 .sb-org {
     font-size: 10px;
-    color: #7a7486;
+    color: var(--text-3);
     font-style: italic;
     margin-top: 2px;
 }
 .sb-div {
     border: none;
-    border-top: 1px solid rgba(122,116,134,0.15);
+    border-top: 1px solid var(--border);
     margin: 12px 0;
 }
 .sb-section-label {
@@ -180,11 +180,11 @@ section[data-testid="stSidebar"] .stRadio input:checked + div {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: #7a7486;
+    color: var(--text-3);
     padding: 16px 14px 6px;
 }
 .sb-notif {
-    background: #5416c9;
+    background: var(--accent);
     color: #fff;
     padding: 2px 8px;
     border-radius: 10px;
@@ -196,8 +196,8 @@ section[data-testid="stSidebar"] .stRadio input:checked + div {
 
 /* ── Quota usage bar (sidebar bottom) ───────────────────────────────────── */
 .sb-quota {
-    background: #f3f4f5;
-    border: 1px solid rgba(122,116,134,0.12);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px;
     margin-top: 8px;
@@ -207,25 +207,25 @@ section[data-testid="stSidebar"] .stRadio input:checked + div {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #7a7486;
+    color: var(--text-3);
     margin-bottom: 8px;
 }
 .sb-quota-bar-bg {
     width: 100%;
     height: 4px;
-    background: #e1e3e4;
+    background: var(--surface-3);
     border-radius: 4px;
     margin-bottom: 6px;
     overflow: hidden;
 }
 .sb-quota-bar-fill {
     height: 100%;
-    background: #5416c9;
+    background: var(--accent);
     border-radius: 4px;
 }
 .sb-quota-text {
     font-size: 10px;
-    color: #7a7486;
+    color: var(--text-3);
 }
 
 /* ── Main content layout ─────────────────────────────────────────────────── */
@@ -291,20 +291,23 @@ def render_sidebar(user: dict) -> str:
         logging.warning(f"[app.sidebar] unread_count: {_notif_err}")
 
     with st.sidebar:
-        # Logo
-        _logo_path = Path(__file__).parent / "assets" / "logo.png"
-        if _logo_path.exists():
-            st.markdown('<div class="sb-logo-img">', unsafe_allow_html=True)
-            st.image(str(_logo_path), use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-        else:
-            st.markdown(
-                '<div class="sb-logo-img" style="font-size:20px;font-weight:900;'
-                'color:#191c1d;padding-bottom:16px;margin-bottom:12px;'
-                'border-bottom:1px solid rgba(122,116,134,0.15);">'
-                'Dashin<span style="color:#5416c9">.</span></div>',
-                unsafe_allow_html=True
-            )
+        # Brand lockup — inline open-ring logo (theme-aware ring) + wordmark
+        from core.styles import get_theme as _get_theme
+        _ring = "#F0EEF7" if _get_theme() == "dark" else "#17151F"
+        st.markdown(
+            f'''<div class="sb-brand">
+              <svg width="34" height="34" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="13" fill="none" stroke="{_ring}" stroke-width="7"
+                        stroke-dasharray="60 21.7" stroke-linecap="round" transform="rotate(2.7 20 20)"/>
+                <circle cx="31" cy="9" r="5" fill="#8E74F8"/>
+              </svg>
+              <div>
+                <div class="sb-name">dashin<span style="color:var(--accent)">.</span></div>
+                <div class="sb-tagline">Research OS</div>
+              </div>
+            </div>''',
+            unsafe_allow_html=True
+        )
 
         # User info
         org_name       = user.get("org_name", "")
@@ -364,7 +367,7 @@ def render_sidebar(user: dict) -> str:
             used   = usage.get("cost_usd", 0)
             budget = usage.get("budget_usd", 0)
             pct    = min(int(usage.get("pct_used", 0)), 100)
-            bar_color = "#ba1a1a" if pct >= 90 else "#b45309" if pct >= 75 else "#5416c9"
+            bar_color = "#ba1a1a" if pct >= 90 else "#b45309" if pct >= 75 else "var(--accent)"
             st.markdown(f"""
             <div class="sb-quota">
                 <div class="sb-quota-label">Quota Usage</div>
@@ -378,6 +381,13 @@ def render_sidebar(user: dict) -> str:
             pass
 
         st.markdown('<hr class="sb-div">', unsafe_allow_html=True)
+
+        # Theme toggle — dark is the default; light is optional.
+        _cur = st.session_state.get("ui_theme", "dark")
+        _label = "☀  Light mode" if _cur == "dark" else "🌙  Dark mode"
+        if st.button(_label, use_container_width=True, key="theme_toggle"):
+            st.session_state["ui_theme"] = "light" if _cur == "dark" else "dark"
+            st.rerun()
 
         if st.button("Sign Out", use_container_width=True):
             for k in ["user", "org_id", "page"]:
@@ -569,16 +579,24 @@ def render_login(invite_token: str = None):
     # Centered layout
     _, col, _ = st.columns([1, 1.3, 1])
     with col:
-        st.markdown("""
-        <div style="max-width:400px;margin:0 auto;background:white;
-                    border:1px solid #E8E4DD;border-radius:14px;
-                    padding:40px;box-shadow:0 4px 24px rgba(0,0,0,.06);
-                    margin-top:60px;">
-            <div style="font-family:'Playfair Display',serif;font-size:26px;
-                        font-weight:700;color:#1A1917;margin-bottom:4px;">
-                Dashin<span style="color:#C9A96E;">.</span>
+        from core.styles import get_theme as _get_theme
+        _ring = "#F0EEF7" if _get_theme() == "dark" else "#17151F"
+        st.markdown(f"""
+        <div style="max-width:420px;margin:60px auto 0;background:var(--surface);
+                    border:1px solid var(--border);border-radius:var(--radius-lg);
+                    padding:40px;box-shadow:var(--shadow-md);">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                <svg width="38" height="38" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="13" fill="none" stroke="{_ring}" stroke-width="7"
+                            stroke-dasharray="60 21.7" stroke-linecap="round" transform="rotate(2.7 20 20)"/>
+                    <circle cx="31" cy="9" r="5" fill="#8E74F8"/>
+                </svg>
+                <span style="font-family:var(--font-display);font-size:28px;font-weight:700;
+                             letter-spacing:-0.02em;color:var(--text-1);">
+                    dashin<span style="color:var(--accent);">.</span>
+                </span>
             </div>
-            <div style="font-size:13px;color:#999;margin-bottom:28px;">
+            <div style="font-size:13px;color:var(--text-3);letter-spacing:0.02em;">
                 Research Operations Platform
             </div>
         </div>

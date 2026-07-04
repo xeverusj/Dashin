@@ -20,18 +20,18 @@ from services.site_learning_service import (
 # ── STYLE ─────────────────────────────────────────────────────────────────────
 CSS = """
 <style>
-.lib-stat{background:#fff;border:1px solid #e8e4dd;border-radius:10px;
+.lib-stat{background:#fff;border:1px solid var(--border);border-radius:10px;
   padding:16px 20px;text-align:center;flex:1;min-width:110px}
-.lib-stat-val{font-size:26px;font-weight:700;color:#1a1917}
-.lib-stat-label{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:1.2px;margin-top:3px}
+.lib-stat-val{font-size:26px;font-weight:700;color:var(--text-1)}
+.lib-stat-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1.2px;margin-top:3px}
 .lib-row{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
-.badge-stable{background:#ecf7f0;color:#3d9e6a;border:1px solid #b8dfc8;
+.badge-stable{background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);
   display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:600}
-.badge-fragile{background:#fff8ec;color:#c9a96e;border:1px solid #e8d5a8;
+.badge-fragile{background:var(--surface-2);color:var(--accent);border:1px solid var(--accent-border);
   display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:600}
-.badge-expired{background:#fdecea;color:#d45050;border:1px solid #f0b8b8;
+.badge-expired{background:var(--error-bg);color:var(--error);border:1px solid var(--error-border);
   display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:600}
-.badge-failed{background:#fdecea;color:#d45050;border:1px solid #f0b8b8;
+.badge-failed{background:var(--error-bg);color:var(--error);border:1px solid var(--error-border);
   display:inline-block;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:600}
 </style>
 """
@@ -64,8 +64,8 @@ def _quality_bar(score) -> str:
     if score is None:
         return "—"
     pct = int((score or 0) * 100)
-    colour = "#3d9e6a" if pct >= 70 else "#c9a96e" if pct >= 50 else "#d45050"
-    return (f'<div style="background:#f0f0f0;border-radius:4px;height:8px;width:80px;display:inline-block">'
+    colour = "var(--success)" if pct >= 70 else "var(--accent)" if pct >= 50 else "var(--error)"
+    return (f'<div style="background:var(--surface-2);border-radius:4px;height:8px;width:80px;display:inline-block">'
             f'<div style="background:{colour};height:8px;border-radius:4px;width:{pct}%"></div></div>'
             f'&nbsp;<span style="font-size:11px;color:{colour}">{pct}%</span>')
 
@@ -94,15 +94,15 @@ def render(user: dict, allow_delete: bool = False, allow_mark_stable: bool = Fal
         <div class="lib-stat-label">Total Sites</div>
       </div>
       <div class="lib-stat">
-        <div class="lib-stat-val" style="color:#3d9e6a">{stable}</div>
+        <div class="lib-stat-val" style="color:var(--success)">{stable}</div>
         <div class="lib-stat-label">Stable (never expires)</div>
       </div>
       <div class="lib-stat">
-        <div class="lib-stat-val" style="color:#c9a96e">{fragile}</div>
+        <div class="lib-stat-val" style="color:var(--accent)">{fragile}</div>
         <div class="lib-stat-label">Fragile (30-day TTL)</div>
       </div>
       <div class="lib-stat">
-        <div class="lib-stat-val" style="color:#d45050">{failed}</div>
+        <div class="lib-stat-val" style="color:var(--error)">{failed}</div>
         <div class="lib-stat-label">Failed (needs attention)</div>
       </div>
       <div class="lib-stat">

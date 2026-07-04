@@ -173,12 +173,12 @@ def _render_crm_view(crm: list, campaign_id: int):
         rows_html += f"""
         <tr>
             <td><b>{r.get('full_name','')}</b><br>
-                <small style="color:#888;">{r.get('company','')}</small></td>
-            <td style="color:#888;">{r.get('role','')}</td>
-            <td>{pill}{f'<br><small style="color:#2E7D32">{meeting_str}</small>' if meeting_str else ''}</td>
+                <small style="color:var(--text-3);">{r.get('company','')}</small></td>
+            <td style="color:var(--text-3);">{r.get('role','')}</td>
+            <td>{pill}{f'<br><small style="color:var(--success)">{meeting_str}</small>' if meeting_str else ''}</td>
             <td>{email_str}</td>
-            <td style="color:#888;font-size:12px;">{r.get('outreach_from','')}</td>
-            <td style="font-size:12px;color:#666;">{notes_str}</td>
+            <td style="color:var(--text-3);font-size:12px;">{r.get('outreach_from','')}</td>
+            <td style="font-size:12px;color:var(--text-2);">{notes_str}</td>
         </tr>
         """
 

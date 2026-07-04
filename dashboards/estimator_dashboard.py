@@ -189,14 +189,14 @@ def _render_this_week(org_id: int, week_start: str, week_end: str):
             <div class="breakdown-row">
                 <div>
                     <b>{r['name']}</b><br>
-                    <small style="color:#888;">{leads} leads ·
+                    <small style="color:var(--text-3);">{leads} leads ·
                     {mins:.0f} mins total</small>
                 </div>
                 <div style="text-align:right;">
                     <div style="font-family:monospace;">
                         £{cost:.2f}
                     </div>
-                    <div style="font-size:11px;color:#888;">
+                    <div style="font-size:11px;color:var(--text-3);">
                         £{cpl:.2f}/lead
                     </div>
                 </div>

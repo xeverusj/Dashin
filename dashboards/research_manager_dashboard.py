@@ -252,7 +252,7 @@ def _render_flags(org_id: int, user_id: int):
                 {icon} {flag['flag_type'].replace('_',' ').title()}
                 — {flag.get('full_name','Unknown')}
             </div>
-            <div style="font-size:12px;color:#666;margin-top:4px;">
+            <div style="font-size:12px;color:var(--text-2);margin-top:4px;">
                 {flag.get('detail','')} ·
                 Flagged: {(flag.get('flagged_at') or '')[:10]}
             </div>
@@ -288,7 +288,7 @@ def _render_quotas(org_id: int, user_id: int, week_start: str):
             st.markdown(f"""
             <div class="quota-card">
                 <div style="font-weight:600;">{q['researcher_name']}</div>
-                <div style="font-size:12px;color:#888;margin:4px 0;">
+                <div style="font-size:12px;color:var(--text-3);margin:4px 0;">
                     Target: {target} leads · Delivered: {delivered}
                 </div>
             </div>
@@ -425,13 +425,13 @@ def _render_quality_report(org_id: int):
             name       = r.get("name", "?")
             count      = r.get("enriched_count") or 0
             avg_q      = round((r.get("avg_quality") or 0) * 100)
-            colour     = "#3d9e6a" if avg_q >= 80 else "#c9a96e" if avg_q >= 50 else "#d45050"
+            colour     = "var(--success)" if avg_q >= 80 else "var(--accent)" if avg_q >= 50 else "var(--error)"
             col_name, col_bar, col_count = st.columns([2, 3, 1])
             with col_name:
                 st.markdown(f"**{name}**")
             with col_bar:
                 st.markdown(
-                    f'<div style="background:#f0f0f0;border-radius:4px;height:10px;margin-top:6px">'
+                    f'<div style="background:var(--surface-2);border-radius:4px;height:10px;margin-top:6px">'
                     f'<div style="background:{colour};height:10px;border-radius:4px;width:{avg_q}%"></div>'
                     f'</div>',
                     unsafe_allow_html=True,

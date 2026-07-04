@@ -1532,7 +1532,21 @@ def setup_network_intercept(page):
             if any(s in url.lower() for s in skip):
                 return
             data = response.json()
-            intercepted.append({"url": url, "data": data})
+            # Capture the REQUEST too (method/headers/body) so we can replay the
+            # endpoint authenticated — the browser's live session token rides
+            # along in these headers, so no manual token handling is needed.
+            req = response.request
+            try:
+                req_headers = dict(req.headers)
+            except Exception:
+                req_headers = {}
+            try:
+                post_data = req.post_data
+            except Exception:
+                post_data = None
+            intercepted.append({"url": url, "data": data,
+                                "method": req.method, "headers": req_headers,
+                                "post_data": post_data})
         except Exception:
             pass
 
@@ -1580,15 +1594,27 @@ def extract_leads_from_intercepted(intercepted):
                     found_name = obj[k].strip()
                     break
             if found_name and found_name not in leads:
-                title   = next((str(obj[k]).strip() for k in TITLE_KEYS   if k in obj and obj[k]), "N/A")
-                company = next((str(obj[k]).strip() for k in COMPANY_KEYS if k in obj and obj[k]), "N/A")
+                def _scalar(v):
+                    # Some APIs nest company/title as an object — use its 'name'.
+                    if isinstance(v, dict):
+                        return str(v.get("name") or v.get("title") or "").strip()
+                    return str(v).strip() if v else ""
+                title   = next((_scalar(obj[k]) for k in TITLE_KEYS   if k in obj and _scalar(obj[k])), "N/A")
+                company = next((_scalar(obj[k]) for k in COMPANY_KEYS if k in obj and _scalar(obj[k])), "N/A")
                 if is_valid_name(found_name) or len(found_name) > 2:
                     leads[found_name] = {
                         "name": found_name, "title": title,
                         "company": company, "category": "N/A", "tags": ""
                     }
-            # Always recurse into values
-            for v in obj.values():
+            # Recurse into values — but NOT into company/title/address/media
+            # sub-objects, whose own 'name' fields would otherwise be mistaken
+            # for people (e.g. a nested {company:{name:'Acme'}} → phantom lead).
+            skip_recurse = COMPANY_KEYS | TITLE_KEYS | {
+                "address", "location", "coordinates", "geo", "image", "avatar",
+                "photo", "picture", "logo", "banner", "social", "links", "meta"}
+            for k, v in obj.items():
+                if k in skip_recurse:
+                    continue
                 if isinstance(v, (dict, list)):
                     walk(v, depth + 1)
 
@@ -1596,6 +1622,136 @@ def extract_leads_from_intercepted(intercepted):
         walk(entry.get("data"))
 
     return leads
+
+
+# ==========================================
+# TIER-A: API REPLAY (mobile/app + web portals)
+# ==========================================
+# Every event app — native or web — fetches its attendee list as JSON from an
+# authenticated API. Instead of scraping the DOM (or debugging a phone), we find
+# that endpoint from the captured traffic and REPLAY it with pagination, reusing
+# the live browser session for auth. Platform-agnostic: one engine, every
+# platform (Brella, Swapcard, Whova, and ones we've never heard of).
+
+# Query params platforms use for paging, in rough priority order.
+_PAGE_PARAMS = ["page", "pageNumber", "page_number", "pageIndex", "pageindex",
+                "offset", "skip", "from", "start", "_start", "$skip"]
+_OFFSET_PARAMS = {"offset", "skip", "from", "start", "_start", "$skip"}
+
+
+def find_attendee_endpoint(intercepted):
+    """
+    Pick the captured JSON endpoint whose response yields the most person/company
+    records — that's the attendee/exhibitor list. Returns (entry, count) or
+    (None, 0) if nothing looks like a real list.
+    """
+    best, best_count = None, 0
+    for entry in intercepted:
+        try:
+            n = len(extract_leads_from_intercepted([entry]))
+        except Exception:
+            n = 0
+        if n > best_count:
+            best, best_count = entry, n
+    # Require a genuine list, not a stray record or two.
+    return (best, best_count) if best and best_count >= 3 else (None, 0)
+
+
+def _replay_headers(headers: dict) -> dict:
+    """Keep auth-bearing headers, drop the ones the HTTP client must set itself."""
+    drop = {"host", "content-length", "accept-encoding", "connection", "cookie",
+            "content-encoding", ":authority", ":method", ":path", ":scheme"}
+    return {k: v for k, v in (headers or {}).items() if k.lower() not in drop}
+
+
+def replay_paginate(context, endpoint, contacts_dict, save_cb, max_pages=400):
+    """
+    Replay an attendee endpoint page-by-page using the live session, extracting
+    leads from each JSON page until it runs dry. Handles GET query pagination
+    (page-number or offset style) and best-effort POST/GraphQL body pagination.
+    Returns the number of NEW leads added.
+    """
+    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+
+    url = endpoint["url"]
+    method = (endpoint.get("method") or "GET").upper()
+    headers = _replay_headers(endpoint.get("headers"))
+    post_data = endpoint.get("post_data")
+
+    parsed = urlparse(url)
+    qs = parse_qs(parsed.query, keep_blank_values=True)
+    page_param = next((p for p in _PAGE_PARAMS if p in qs), None)
+
+    # POST/GraphQL pagination lives in the body — only replay when we can parse it.
+    post_json = None
+    if method == "POST" and post_data:
+        try:
+            post_json = json.loads(post_data)
+        except Exception:
+            post_json = None
+        if post_json is None:
+            return 0  # can't safely paginate this POST — leave it to the DOM path
+
+    if page_param is None and method == "GET":
+        page_param = "page"          # assume page-number if none present
+        qs[page_param] = ["1"]
+    is_offset = page_param in _OFFSET_PARAMS
+
+    def _bump_post(idx, step):
+        """Increment a page/offset field inside the POST JSON body (best effort)."""
+        def rec(o):
+            if isinstance(o, dict):
+                for k in list(o.keys()):
+                    if k.lower() in _PAGE_PARAMS or k.lower() in ("page", "offset", "skip"):
+                        if isinstance(o[k], int):
+                            o[k] = (step * idx) if k.lower() in _OFFSET_PARAMS else (idx + 1)
+                    else:
+                        rec(o[k])
+            elif isinstance(o, list):
+                for v in o:
+                    rec(v)
+        rec(post_json)
+        return json.dumps(post_json)
+
+    total_new, step, empties = 0, None, 0
+    for idx in range(max_pages):
+        try:
+            if method == "POST":
+                body = _bump_post(idx, step or 20) if post_json is not None else post_data
+                resp = context.request.post(url, headers=headers, data=body)
+            else:
+                if is_offset:
+                    qs[page_param] = [str((step or 20) * idx)]
+                else:
+                    qs[page_param] = [str(idx + 1)]
+                target = urlunparse(parsed._replace(query=urlencode(qs, doseq=True)))
+                resp = context.request.get(target, headers=headers)
+            if not resp.ok:
+                break
+            data = resp.json()
+        except Exception:
+            break
+
+        page_leads = extract_leads_from_intercepted([{"data": data}])
+        if step is None and page_leads:
+            step = len(page_leads)   # infer page size for offset paging
+
+        new = 0
+        for name, rec in page_leads.items():
+            if name not in contacts_dict:
+                contacts_dict[name] = rec
+                new += 1
+        if new:
+            save_cb(page_leads)
+            total_new += new
+            empties = 0
+        else:
+            empties += 1
+            if empties >= 2:         # two dry pages in a row → done
+                break
+        time.sleep(0.4)              # gentle pacing
+
+    return total_new
 
 
 # ==========================================
@@ -1669,11 +1825,13 @@ def do_scroll(page, card_selector=None, ws_wait=5):
 # ==========================================
 # MAIN WORKER
 # ==========================================
-def run_worker(target_url, mobile=False):
+def run_worker(target_url, mobile=False, cdp_url=None):
     print("\n" + "="*60)
     print("  Universal AI Scraper — powered by Claude Vision")
     if mobile:
         print("  Mode: MOBILE EMULATION (iPhone 13)")
+    if cdp_url:
+        print(f"  Mode: ATTACH to existing browser/emulator via CDP → {cdp_url}")
     print("="*60 + "\n")
 
     # ── Normalise URL — add https:// if user forgot the scheme ───────────
@@ -1752,26 +1910,37 @@ def run_worker(target_url, mobile=False):
             }
         }
 
-        browser = pw.chromium.launch(
-            headless=False,
-            args=[
-                "--disable-blink-features=AutomationControlled",
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-web-security",
-                "--disable-features=IsolateOrigins,site-per-process",
-                "--start-maximized",        # open full-screen so user can scroll freely
-                "--window-size=1920,1080",  # fallback if maximise not supported
-            ]
-        )
-        # Desktop: remove fixed viewport so browser uses the full maximised window.
-        # A fixed viewport would letterbox the page and prevent free scrolling.
-        if mobile:
-            context = browser.new_context(**MOBILE_DEVICE)
+        # ── Emulator / device attach (CDP) ─────────────────────────────────
+        # Fallback for genuine app-only events: run the app in an Android
+        # emulator (or device) whose Chrome/WebView exposes a remote-debugging
+        # endpoint, and attach to it. The SAME network-capture + API-replay
+        # engine then works against the app's traffic — no bundled emulator, no
+        # proxy, no cert install. Point --cdp at e.g. http://127.0.0.1:9222.
+        if cdp_url:
+            browser = pw.chromium.connect_over_cdp(cdp_url)
+            context = browser.contexts[0] if browser.contexts else browser.new_context()
+            page = context.pages[0] if context.pages else context.new_page()
         else:
-            desktop_ctx = {k: v for k, v in DESKTOP_CONTEXT.items() if k != "viewport"}
-            context = browser.new_context(**desktop_ctx)
-        page = context.new_page()
+            browser = pw.chromium.launch(
+                headless=False,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-web-security",
+                    "--disable-features=IsolateOrigins,site-per-process",
+                    "--start-maximized",        # open full-screen so user can scroll freely
+                    "--window-size=1920,1080",  # fallback if maximise not supported
+                ]
+            )
+            # Desktop: remove fixed viewport so browser uses the full maximised window.
+            # A fixed viewport would letterbox the page and prevent free scrolling.
+            if mobile:
+                context = browser.new_context(**MOBILE_DEVICE)
+            else:
+                desktop_ctx = {k: v for k, v in DESKTOP_CONTEXT.items() if k != "viewport"}
+                context = browser.new_context(**desktop_ctx)
+            page = context.new_page()
 
         # Apply stealth patches — removes navigator.webdriver, fixes canvas/WebGL fingerprints
         if _STEALTH_AVAILABLE:
@@ -1856,6 +2025,35 @@ def run_worker(target_url, mobile=False):
             except Exception:
                 pass
             return
+
+        # ── TIER A: API replay (mobile/app-companion + web) ────────────────
+        # The portal already fetched its attendee list as JSON. Find that
+        # endpoint and replay it with pagination, authenticated by the live
+        # session — pulls every record without DOM scraping. This is what makes
+        # mobile-only / app-companion events work without phone debugging, on
+        # any platform. Additive: if it finds nothing, the DOM path runs as before.
+        try:
+            time.sleep(2)  # let the initial attendee fetch land in `intercepted`
+            endpoint, per_page = find_attendee_endpoint(intercepted)
+            if endpoint:
+                print(f"  [api-replay] Attendee endpoint found (~{per_page}/page): "
+                      f"{endpoint['url'][:90]}")
+
+                def _replay_save(leads):
+                    save_batch(leads, page.url, category, session_filepath,
+                               layout="api_replay", session_id=db_session_id,
+                               event_name=domain)
+                    _db_save_batch(leads, page.url, category, "api_replay",
+                                   db_session_id, domain, org_id=1)
+
+                got = replay_paginate(context, endpoint, contacts_dict, _replay_save)
+                print(f"  [api-replay] Pulled {got} leads directly from the API")
+                if got >= per_page:
+                    intercepted.clear()  # replay worked — reset passive buffer
+            else:
+                print("  [api-replay] No attendee API detected — using DOM scraping")
+        except Exception as _are:
+            print(f"  [api-replay] skipped: {str(_are)[:90]}")
 
         # ── Load or learn page structure ───────────────────────────────────
         patterns = load_patterns()
@@ -2179,13 +2377,21 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         url  = sys.argv[1]
         mob  = "--mobile" in sys.argv
+        # Optional: attach to an existing browser/emulator via CDP, e.g.
+        #   --cdp http://127.0.0.1:9222
+        cdp = None
+        if "--cdp" in sys.argv:
+            i = sys.argv.index("--cdp")
+            if i + 1 < len(sys.argv):
+                cdp = sys.argv[i + 1]
         if mob:
             print("  Mobile emulation enabled (--mobile flag detected)")
-        run_worker(url, mobile=mob)
+        run_worker(url, mobile=mob, cdp_url=cdp)
     else:
-        print("Usage: python worker.py <event_url> [--mobile]")
+        print("Usage: python worker.py <event_url> [--mobile] [--cdp <debug-url>]")
         print("\nExamples:")
         print("  python worker.py https://app.brella.io/events/myevent/people")
         print("  python worker.py https://app.bettshow.com/newfront/participants?page=delegates")
         print("  python worker.py https://community.e-world-essen.com/users")
-        print("  python worker.py https://m.someapp.com/attendees --mobile  # mobile-only apps")
+        print("  python worker.py https://m.someapp.com/attendees --mobile  # mobile web")
+        print("  python worker.py https://app.someevent.com/people --cdp http://127.0.0.1:9222  # attach to emulator/device")

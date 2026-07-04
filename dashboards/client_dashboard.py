@@ -29,15 +29,15 @@ STYLES = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&display=swap');
 
-.stApp { background: #FDFCFA; font-family: 'Lato', sans-serif; }
-section[data-testid="stSidebar"] { background: #1A1917 !important; }
-section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
+.stApp { background: var(--surface); font-family: 'Lato', sans-serif; }
+section[data-testid="stSidebar"] { background: var(--text-1) !important; }
+section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 
 .portal-header {
-    background: linear-gradient(135deg, #1A1917 0%, #2C2A27 60%, #3D3A35 100%);
+    background: linear-gradient(135deg, var(--text-1) 0%, #2C2A27 60%, #3D3A35 100%);
     border-radius: 12px;
     padding: 28px 32px;
-    color: #F0EDE8;
+    color: var(--surface-2);
     margin-bottom: 28px;
     position: relative;
     overflow: hidden;
@@ -60,7 +60,7 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
 .portal-badge {
     display: inline-block;
     background: rgba(201,169,110,0.2);
-    color: #C9A96E;
+    color: var(--accent);
     border: 1px solid rgba(201,169,110,0.3);
     padding: 3px 12px;
     border-radius: 20px;
@@ -72,14 +72,14 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
 }
 .portal-icp {
     font-size: 13px;
-    color: #AAA;
+    color: var(--text-3);
     max-width: 500px;
     line-height: 1.5;
 }
 
 .home-stat {
     background: white;
-    border: 1px solid #EEE;
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px;
     text-align: center;
@@ -89,12 +89,12 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
     font-family: 'Playfair Display', serif;
     font-size: 36px;
     font-weight: 600;
-    color: #1A1917;
+    color: var(--text-1);
     line-height: 1;
 }
 .home-stat-label {
     font-size: 12px;
-    color: #999;
+    color: var(--text-3);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-top: 6px;
@@ -102,7 +102,7 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
 
 .camp-progress-card {
     background: white;
-    border: 1px solid #EEE;
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px 24px;
     margin-bottom: 16px;
@@ -112,7 +112,7 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
     font-family: 'Playfair Display', serif;
     font-size: 18px;
     font-weight: 600;
-    color: #1A1917;
+    color: var(--text-1);
     margin-bottom: 4px;
 }
 .camp-status-chip {
@@ -124,14 +124,14 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-.chip-active   { background: #E8F5E9; color: #2E7D32; }
-.chip-building { background: #E3F2FD; color: #1565C0; }
-.chip-paused   { background: #FFF3E0; color: #E65100; }
-.chip-ready    { background: #C8E6C9; color: #1B5E20; }
+.chip-active   { background: var(--success-bg); color: var(--success); }
+.chip-building { background: var(--info-bg); color: var(--info); }
+.chip-paused   { background: var(--surface-2); color: #E65100; }
+.chip-ready    { background: var(--success-border); color: #1B5E20; }
 
 .meeting-card {
-    background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
-    border: 1px solid #C8E6C9;
+    background: linear-gradient(135deg, var(--success-bg) 0%, #F1F8E9 100%);
+    border: 1px solid var(--success-border);
     border-radius: 8px;
     padding: 14px 18px;
     margin-bottom: 10px;
@@ -140,7 +140,7 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
     gap: 16px;
 }
 .meeting-date {
-    background: #2E7D32;
+    background: var(--success);
     color: white;
     border-radius: 8px;
     padding: 8px 12px;
@@ -150,19 +150,19 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
 .meeting-day   { font-size: 22px; font-weight: 700; line-height: 1; }
 .meeting-month { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 .meeting-info  { flex: 1; }
-.meeting-name  { font-weight: 700; font-size: 14px; color: #1A1917; }
-.meeting-co    { font-size: 13px; color: #666; }
+.meeting-name  { font-weight: 700; font-size: 14px; color: var(--text-1); }
+.meeting-co    { font-size: 13px; color: var(--text-2); }
 
 .notif-card {
-    background: #FFFBF0;
-    border: 1px solid #FFE082;
+    background: var(--surface-2);
+    border: 1px solid var(--accent-border);
     border-radius: 8px;
     padding: 12px 16px;
     margin-bottom: 8px;
 }
-.notif-title { font-weight: 600; font-size: 13px; color: #1A1917; }
-.notif-body  { font-size: 12px; color: #666; margin-top: 3px; }
-.notif-time  { font-size: 11px; color: #AAA; margin-top: 4px; }
+.notif-title { font-weight: 600; font-size: 13px; color: var(--text-1); }
+.notif-body  { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+.notif-time  { font-size: 11px; color: var(--text-3); margin-top: 4px; }
 
 .lead-table { font-size: 13px; }
 
@@ -173,19 +173,19 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
     font-size: 11px;
     font-weight: 600;
 }
-.s-booked            { background:#C8E6C9; color:#1B5E20; }
+.s-booked            { background:var(--success-border); color:#1B5E20; }
 .s-interested        { background:#E1F5FE; color:#01579B; }
-.s-meeting_requested { background:#FFF3E0; color:#E65100; }
-.s-responded         { background:#E8F5E9; color:#2E7D32; }
+.s-meeting_requested { background:var(--surface-2); color:#E65100; }
+.s-responded         { background:var(--success-bg); color:var(--success); }
 .s-waiting           { background:#FFF9C4; color:#827717; }
-.s-contacted         { background:#E3F2FD; color:#1565C0; }
+.s-contacted         { background:var(--info-bg); color:var(--info); }
 .s-not_interested    { background:#FFCDD2; color:#B71C1C; }
 .s-enriched          { background:#F3E5F5; color:#4A148C; }
-.s-no_email          { background:#F5F5F5; color:#777; }
+.s-no_email          { background:var(--surface-2); color:var(--text-3); }
 
 .file-card {
     background: white;
-    border: 1px solid #EEE;
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px 18px;
     margin-bottom: 10px;
@@ -195,23 +195,23 @@ section[data-testid="stSidebar"] * { color: #F0EDE8 !important; }
 }
 .file-icon { font-size: 24px; margin-right: 12px; }
 .file-name { font-weight: 600; font-size: 13px; }
-.file-meta { font-size: 11px; color: #999; margin-top: 2px; }
+.file-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
 .approval-pending  { color: #E65100; }
-.approval-approved { color: #2E7D32; }
-.approval-rejected { color: #C62828; }
+.approval-approved { color: var(--success); }
+.approval-rejected { color: var(--error); }
 
 .note-card {
     background: white;
-    border: 1px solid #EEE;
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px 18px;
     margin-bottom: 10px;
 }
 .note-author { font-weight: 700; font-size: 13px; }
-.note-role   { font-size: 11px; color: #C9A96E; font-style: italic; }
+.note-role   { font-size: 11px; color: var(--accent); font-style: italic; }
 .note-text   { font-size: 13px; color: #333; margin-top: 8px; line-height: 1.6; }
-.note-time   { font-size: 11px; color: #AAA; margin-top: 6px; }
+.note-time   { font-size: 11px; color: var(--text-3); margin-top: 6px; }
 </style>
 """
 
@@ -498,15 +498,15 @@ def _render_home(org_id: int, client_id: int, client, user_id: int):
                                 gap:8px;text-align:center;">
                         <div>
                             <div style="font-size:20px;font-weight:700;">{leads}</div>
-                            <div style="font-size:11px;color:#999;">Contacts</div>
+                            <div style="font-size:11px;color:var(--text-3);">Contacts</div>
                         </div>
                         <div>
                             <div style="font-size:20px;font-weight:700;">{sent}</div>
-                            <div style="font-size:11px;color:#999;">Emails Sent</div>
+                            <div style="font-size:11px;color:var(--text-3);">Emails Sent</div>
                         </div>
                         <div>
                             <div style="font-size:20px;font-weight:700;">{done}</div>
-                            <div style="font-size:11px;color:#999;">Meetings</div>
+                            <div style="font-size:11px;color:var(--text-3);">Meetings</div>
                         </div>
                     </div>
                 </div>
@@ -698,9 +698,9 @@ def _render_lead_table(leads: list, show_email: bool,
         status  = r.get("crm_status","") or "new"
         pill    = f'<span class="status-pill s-{status}">{status.replace("_"," ").title()}</span>'
         email   = r.get("email","") or ""
-        email_cell = (f'<a href="mailto:{email}" style="color:#1565C0;">{email}</a>'
+        email_cell = (f'<a href="mailto:{email}" style="color:var(--info);">{email}</a>'
                       if show_email and "@" in email else
-                      '<span style="color:#999;">—</span>')
+                      '<span style="color:var(--text-3);">—</span>')
         li_url  = r.get("linkedin_url","") or ""
         li_cell = (f'<a href="{li_url}" target="_blank" '
                    f'style="color:#0077B5;">LinkedIn</a>'
@@ -711,20 +711,20 @@ def _render_lead_table(leads: list, show_email: bool,
         rows_html += f"""
         <tr>
             <td><b>{r['full_name']}</b><br>
-                <small style="color:#888;">{r.get('company','')}</small></td>
-            <td style="font-size:12px;color:#666;">{r.get('title','')}</td>
-            <td>{pill}{f'<br><small style="color:#2E7D32;">{meet_cell}</small>' if meet_cell else ''}</td>
+                <small style="color:var(--text-3);">{r.get('company','')}</small></td>
+            <td style="font-size:12px;color:var(--text-2);">{r.get('title','')}</td>
+            <td>{pill}{f'<br><small style="color:var(--success);">{meet_cell}</small>' if meet_cell else ''}</td>
             <td>{email_cell}</td>
             <td>{li_cell}</td>
-            <td style="font-size:12px;color:#888;">{r.get('country','')}</td>
-            <td style="font-size:12px;color:#888;">{r.get('campaign_name','')}</td>
+            <td style="font-size:12px;color:var(--text-3);">{r.get('country','')}</td>
+            <td style="font-size:12px;color:var(--text-3);">{r.get('campaign_name','')}</td>
         </tr>
         """
 
     st.markdown(f"""
     <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <thead>
-            <tr style="background:#1A1917;color:white;">
+            <tr style="background:var(--text-1);color:white;">
                 <th style="padding:10px;text-align:left;">Name</th>
                 <th style="padding:10px;text-align:left;">Title</th>
                 <th style="padding:10px;text-align:left;">Status</th>
@@ -995,7 +995,7 @@ def _render_notes(org_id: int, client_id: int,
         for n in notes:
             is_me = n["author_id"] == user_id
             align = "right" if is_me else "left"
-            bg    = "#E8F5E9" if is_me else "#F5F5F5"
+            bg    = "var(--success-bg)" if is_me else "var(--surface-2)"
             role_label = {
                 "manager": "Account Manager",
                 "campaign_manager": "Campaign Manager",
@@ -1010,12 +1010,12 @@ def _render_notes(org_id: int, client_id: int,
                             background:{bg};border-radius:10px;
                             padding:12px 16px;text-align:left;">
                     <div style="font-weight:700;font-size:12px;
-                                color:#C9A96E;">{role_label}</div>
-                    <div style="font-size:13px;color:#1A1917;
+                                color:var(--accent);">{role_label}</div>
+                    <div style="font-size:13px;color:var(--text-1);
                                 margin-top:4px;line-height:1.6;">
                         {n['note']}
                     </div>
-                    <div style="font-size:11px;color:#AAA;margin-top:6px;">
+                    <div style="font-size:11px;color:var(--text-3);margin-top:6px;">
                         {(n['created_at'] or '')[:16].replace('T',' ')}
                     </div>
                 </div>

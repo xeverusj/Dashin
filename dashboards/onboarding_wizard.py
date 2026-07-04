@@ -15,23 +15,24 @@ STYLES = """
 .ob-container {
     max-width: 640px;
     margin: 40px auto;
-    background: #FFFFFF;
-    border: 1px solid #E8E4DD;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 14px;
     padding: 40px 48px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.06);
 }
 .ob-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
+    font-family: var(--font-display);
+    font-size: 26px;
     font-weight: 700;
-    color: #1A1917;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
     margin-bottom: 6px;
 }
-.ob-logo span { color: #C9A96E; }
+.ob-logo span { color: var(--accent); }
 .ob-step {
     font-size: 11px;
-    color: #BBB;
+    color: var(--text-3);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     font-weight: 600;
@@ -40,25 +41,25 @@ STYLES = """
 .ob-title {
     font-size: 22px;
     font-weight: 700;
-    color: #1A1917;
+    color: var(--text-1);
     margin-bottom: 8px;
 }
 .ob-sub {
     font-size: 14px;
-    color: #888;
+    color: var(--text-3);
     margin-bottom: 28px;
     line-height: 1.6;
 }
 .ob-next-item {
-    background: #F8F7F4;
-    border: 1px solid #E8E4DD;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 16px;
     margin-bottom: 8px;
     font-size: 13px;
-    color: #1A1917;
+    color: var(--text-1);
 }
-.ob-next-item strong { color: #C9A96E; }
+.ob-next-item strong { color: var(--accent); }
 </style>
 """
 
@@ -75,7 +76,7 @@ def render(user: dict):
     with col:
         st.markdown("""
         <div style="text-align:center;margin-bottom:32px;">
-            <div class="ob-logo">Dashin<span>.</span></div>
+            <div class="ob-logo">dashin<span>.</span></div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -256,7 +257,7 @@ def render(user: dict):
                 st.markdown(f"""
                 <div class="ob-next-item">
                     <strong>{title}</strong><br>
-                    <span style="color:#888;font-size:12px;">{desc}</span>
+                    <span style="color:var(--text-3);font-size:12px;">{desc}</span>
                 </div>
                 """, unsafe_allow_html=True)
 

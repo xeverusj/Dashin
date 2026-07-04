@@ -157,10 +157,10 @@ def _render_all_orgs(dark: bool = True):
                 </div>
                 <div style="text-align:right;min-width:140px;">
                     <div style="font-family:'JetBrains Mono',monospace;
-                                font-size:13px;color:#C9A96E;">
+                                font-size:13px;color:var(--accent);">
                         ${cost:.3f} / ${budget:.0f}{alert}
                     </div>
-                    <div style="font-size:11px;color:#666;">AI this period</div>
+                    <div style="font-size:11px;color:var(--text-2);">AI this period</div>
                     <div class="ai-bar-wrap">
                         <div class="ai-bar-fill {bar_cls}"
                              style="width:{min(pct,100):.0f}%"></div>
@@ -325,7 +325,7 @@ def _render_org_hierarchy(user: dict, dark: bool = True):
                         {parent_str}
                     </div>
                 </div>
-                <div style="text-align:right;font-size:11px;color:#666;">
+                <div style="text-align:right;font-size:11px;color:var(--text-2);">
                     ID: {o.get('id')}<br>
                     Sub: {o.get('subscription_tier','free')}
                 </div>

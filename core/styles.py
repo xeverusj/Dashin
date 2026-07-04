@@ -13,63 +13,32 @@ import streamlit as st
 # ── CSS CUSTOM PROPERTIES + SHARED COMPONENTS ─────────────────────────────────
 SHARED_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-/* ── CSS VARIABLES ──────────────────────────────────────────────────────── */
+/* ── DESIGN TOKENS ──────────────────────────────────────────────────────────
+   Injected per-theme by inject_shared_css(theme). __ROOT_VARS__ is replaced
+   with the dark or light token set. Fonts/radii are theme-independent and live
+   here. */
 :root {
-    /* Backgrounds */
-    --bg:           #f8f9fa;
-    --surface:      #ffffff;
-    --surface-2:    #f3f4f5;
-    --surface-3:    #e7e8e9;
-    --surface-4:    #e1e3e4;
-    --border:       rgba(122, 116, 134, 0.20);
-    --border-light: rgba(122, 116, 134, 0.08);
+    /* Type system */
+    --font-sans:    'Instrument Sans', 'Inter', -apple-system, sans-serif;
+    --font-display: 'Space Grotesk', 'Instrument Sans', sans-serif;
+    --font-mono:    'IBM Plex Mono', ui-monospace, monospace;
 
-    /* Typography */
-    --text-1: #191c1d;
-    --text-2: #494455;
-    --text-3: #7a7486;
-
-    /* Primary accent — purple */
-    --accent:        #5416c9;
-    --accent-light:  #6a39de;
-    --accent-bg:     rgba(84, 22, 201, 0.08);
-    --accent-border: rgba(84, 22, 201, 0.20);
-
-    /* Semantic colours */
-    --success:        #16a34a;
-    --success-bg:     rgba(22, 163, 74, 0.08);
-    --success-border: rgba(22, 163, 74, 0.20);
-
-    --error:        #ba1a1a;
-    --error-bg:     rgba(186, 26, 26, 0.08);
-    --error-border: rgba(186, 26, 26, 0.20);
-
-    --info:        #5416c9;
-    --info-bg:     rgba(84, 22, 201, 0.06);
-    --info-border: rgba(84, 22, 201, 0.18);
-
-    --purple:        #5416c9;
-    --purple-bg:     rgba(84, 22, 201, 0.08);
-    --purple-border: rgba(84, 22, 201, 0.20);
-
-    /* Elevation */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --shadow-sm: 0 4px 20px -4px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 8px 40px -12px rgba(0, 0, 0, 0.10);
-    --glow:      0 10px 30px -5px rgba(84, 22, 201, 0.20);
+    /* Elevation (radii shared; shadows tuned per-theme below) */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
 }
+__ROOT_VARS__
 
 /* ── BASE ────────────────────────────────────────────────────────────────── */
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
 }
 .stApp {
     background: var(--bg) !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     color: var(--text-1) !important;
 }
 .main .block-container {
@@ -78,15 +47,36 @@ html, body, [class*="css"] {
     max-width: 1280px !important;
 }
 
+/* ── TYPOGRAPHY: display font for headings, mono for data ─────────────────── */
+h1, h2, h3,
+.stApp h1, .stApp h2, .stApp h3,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+.sb-name,
+.rq-header-title, .rm-title, .cb-title, .cm-title,
+.admin-title, .est-title, .sa-title {
+    font-family: var(--font-display) !important;
+    letter-spacing: -0.02em !important;
+}
+/* Metric numbers read as data → mono, tabular */
+[data-testid="stMetricValue"],
+.metric-value, .stat-num, .kpi-num {
+    font-family: var(--font-mono) !important;
+    font-feature-settings: 'tnum' 1 !important;
+    letter-spacing: -0.02em !important;
+}
+.mono { font-family: var(--font-mono) !important; }
+
 /* ── SIDEBAR ─────────────────────────────────────────────────────────────── */
 [data-testid="stSidebar"] {
-    background: rgba(255, 255, 255, 0.85) !important;
-    border-right: 1px solid rgba(122, 116, 134, 0.12) !important;
+    background: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
     backdrop-filter: blur(20px) !important;
 }
 [data-testid="stSidebar"] * {
     color: var(--text-2) !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
 }
 /* Sidebar brand mark */
 .sb-brand {
@@ -175,7 +165,7 @@ html, body, [class*="css"] {
 /* Header title text */
 .rq-header-title, .rm-title, .cb-title,
 .cm-title, .admin-title, .est-title, .sa-title {
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     font-size: 22px !important;
     font-weight: 800 !important;
     letter-spacing: -0.5px !important;
@@ -185,7 +175,7 @@ html, body, [class*="css"] {
 /* Header subtitle text */
 .rq-header-sub, .rm-sub, .cb-sub,
 .cm-sub, .admin-sub, .est-sub, .sa-sub {
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     font-size: 12px !important;
     color: var(--text-3) !important;
     margin-top: 5px !important;
@@ -195,7 +185,7 @@ html, body, [class*="css"] {
 
 /* ── PAGE TITLES ─────────────────────────────────────────────────────────── */
 .page-title {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 36px;
     font-weight: 900;
     color: var(--text-1);
@@ -216,7 +206,7 @@ html, body, [class*="css"] {
 
 /* ── SECTION HEADERS ─────────────────────────────────────────────────────── */
 .sec-hd, .sec-header {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 15px;
     font-weight: 800;
     color: var(--text-1);
@@ -248,7 +238,7 @@ html, body, [class*="css"] {
     box-shadow: var(--glow);
 }
 .stat-val {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 28px;
     font-weight: 900;
     color: var(--text-1);
@@ -286,7 +276,7 @@ html, body, [class*="css"] {
     box-shadow: var(--shadow-sm);
 }
 .kpi-val {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 26px;
     font-weight: 900;
     color: var(--text-1);
@@ -367,7 +357,7 @@ html, body, [class*="css"] {
 
 /* ── LIST CARDS ──────────────────────────────────────────────────────────── */
 .list-card-name {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 15px;
     font-weight: 800;
     color: var(--text-1);
@@ -387,7 +377,7 @@ html, body, [class*="css"] {
     box-shadow: var(--shadow-sm);
 }
 .detail-name {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 20px;
     font-weight: 800;
     color: var(--text-1);
@@ -454,7 +444,7 @@ html, body, [class*="css"] {
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
 }
 .status-badge { padding: 3px 12px; font-size: 10px; }
 .status-pill  { padding: 3px 10px; font-size: 10px; }
@@ -578,7 +568,7 @@ html, body, [class*="css"] {
 /* ── BUTTONS ─────────────────────────────────────────────────────────────── */
 div.stButton > button {
     border-radius: 8px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     font-weight: 700 !important;
     font-size: 12px !important;
     letter-spacing: 0.05em !important;
@@ -587,14 +577,14 @@ div.stButton > button {
     text-transform: uppercase !important;
 }
 div.stButton > button[kind="primary"] {
-    background: var(--accent) !important;
+    background: var(--accent-strong) !important;
     color: #fff !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(84, 22, 201, 0.25) !important;
+    box-shadow: 0 4px 14px -2px rgba(91, 46, 229, 0.45) !important;
 }
 div.stButton > button[kind="primary"]:hover {
-    background: #6a39de !important;
-    box-shadow: 0 6px 20px rgba(84, 22, 201, 0.40) !important;
+    background: var(--accent-light) !important;
+    box-shadow: 0 6px 22px -2px rgba(91, 46, 229, 0.55) !important;
 }
 div.stButton > button[kind="secondary"] {
     background: var(--surface) !important;
@@ -615,7 +605,7 @@ div.stNumberInput input {
     border-radius: 7px !important;
     background: var(--surface) !important;
     font-size: 13px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     color: var(--text-1) !important;
     padding: 10px 14px !important;
 }
@@ -629,7 +619,7 @@ div[data-baseweb="select"] > div {
     border-radius: 7px !important;
     background: var(--surface) !important;
     font-size: 13px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     color: var(--text-1) !important;
 }
 div[data-baseweb="select"] [data-value] { color: var(--text-1) !important; }
@@ -639,7 +629,7 @@ div[data-baseweb="option"]:hover { background: var(--accent-bg) !important; }
 
 /* ── TABS ────────────────────────────────────────────────────────────────── */
 button[data-baseweb="tab"] {
-    font-family: 'Inter', sans-serif !important;
+    font-family: var(--font-sans) !important;
     font-size: 12px !important;
     font-weight: 600 !important;
     color: var(--text-3) !important;
@@ -665,7 +655,7 @@ div[data-testid="stDataFrame"] th { background: var(--surface-2) !important; col
 div[data-testid="stDataFrame"] td { color: var(--text-2) !important; border-color: var(--border-light) !important; }
 
 details         { background: var(--surface) !important; border-color: var(--border) !important; border-radius: var(--radius-sm) !important; }
-details summary { color: var(--text-1) !important; font-family: 'Inter', sans-serif !important; font-weight: 600 !important; }
+details summary { color: var(--text-1) !important; font-family: var(--font-sans) !important; font-weight: 600 !important; }
 
 div[data-testid="stAlert"] { border-radius: var(--radius-sm) !important; }
 
@@ -695,7 +685,7 @@ div[data-testid="stFileUploadDropzone"]:hover {
     margin-bottom: 10px;
     box-shadow: var(--shadow-sm);
 }
-.org-name { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800; color: var(--text-1); margin-bottom: 3px; letter-spacing: -0.2px; }
+.org-name { font-family: var(--font-sans); font-size: 15px; font-weight: 800; color: var(--text-1); margin-bottom: 3px; letter-spacing: -0.2px; }
 .org-meta { font-size: 12px; color: var(--text-3); }
 
 /* ── COST CARDS (estimator) ──────────────────────────────────────────────── */
@@ -708,7 +698,7 @@ div[data-testid="stFileUploadDropzone"]:hover {
     box-shadow: var(--shadow-sm);
 }
 .cost-num {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 28px;
     font-weight: 900;
     color: var(--text-1);
@@ -852,9 +842,86 @@ div[data-testid="stFileUploadDropzone"]:hover {
 """
 
 
-def inject_shared_css():
+# ── THEME TOKEN SETS ─────────────────────────────────────────────────────────
+# Dark is the default (an all-day data tool reads better dark); light is optional.
+# Violet accent per the approved design direction.
+
+_DARK_VARS = """
+:root {
+    --bg:           #131019;
+    --surface:      #1c1926;
+    --surface-2:    #242030;
+    --surface-3:    #2e2a3d;
+    --surface-4:    #383247;
+    --border:       rgba(240, 238, 247, 0.10);
+    --border-light: rgba(240, 238, 247, 0.05);
+
+    --text-1: #f0eef7;
+    --text-2: #b4afc9;
+    --text-3: #8d89a3;
+
+    --accent:        #8e74f8;
+    --accent-light:  #a78bff;
+    --accent-strong: #5b2ee5;
+    --accent-bg:     rgba(142, 116, 248, 0.14);
+    --accent-border: rgba(142, 116, 248, 0.30);
+
+    --success: #34d399; --success-bg: rgba(52,211,153,0.14); --success-border: rgba(52,211,153,0.30);
+    --error:   #fb7185; --error-bg:   rgba(251,113,133,0.14); --error-border:  rgba(251,113,133,0.30);
+    --info:    #8e74f8; --info-bg:    rgba(142,116,248,0.12); --info-border:   rgba(142,116,248,0.24);
+    --purple:  #8e74f8; --purple-bg:  rgba(142,116,248,0.14); --purple-border: rgba(142,116,248,0.30);
+
+    --shadow-sm: 0 4px 20px -6px rgba(0,0,0,0.55);
+    --shadow-md: 0 12px 40px -12px rgba(0,0,0,0.60);
+    --glow:      0 10px 40px -8px rgba(91,46,229,0.45);
+}
+"""
+
+_LIGHT_VARS = """
+:root {
+    --bg:           #efede8;
+    --surface:      #ffffff;
+    --surface-2:    #f0eef7;
+    --surface-3:    #e7e4ef;
+    --surface-4:    #ded9ec;
+    --border:       rgba(23, 21, 31, 0.12);
+    --border-light: rgba(23, 21, 31, 0.06);
+
+    --text-1: #17151f;
+    --text-2: #56526b;
+    --text-3: #8d89a3;
+
+    --accent:        #5b2ee5;
+    --accent-light:  #8e74f8;
+    --accent-strong: #5b2ee5;
+    --accent-bg:     rgba(91, 46, 229, 0.08);
+    --accent-border: rgba(91, 46, 229, 0.22);
+
+    --success: #0e7c6c; --success-bg: rgba(14,124,108,0.10); --success-border: rgba(14,124,108,0.24);
+    --error:   #c0362c; --error-bg:   rgba(192,54,44,0.09);  --error-border:  rgba(192,54,44,0.22);
+    --info:    #5b2ee5; --info-bg:    rgba(91,46,229,0.06);  --info-border:   rgba(91,46,229,0.18);
+    --purple:  #5b2ee5; --purple-bg:  rgba(91,46,229,0.08);  --purple-border: rgba(91,46,229,0.20);
+
+    --shadow-sm: 0 4px 20px -6px rgba(23,21,31,0.08);
+    --shadow-md: 0 12px 40px -14px rgba(23,21,31,0.12);
+    --glow:      0 10px 30px -6px rgba(91,46,229,0.20);
+}
+"""
+
+
+def get_theme() -> str:
+    """Current theme from session state — 'dark' (default) or 'light'."""
+    try:
+        return st.session_state.get("ui_theme", "dark")
+    except Exception:
+        return "dark"
+
+
+def inject_shared_css(theme: str = None):
     """
-    Inject the master design system CSS.
+    Inject the master design system CSS for the active theme.
     Call this at the start of every dashboard's render() function.
     """
-    st.markdown(SHARED_CSS, unsafe_allow_html=True)
+    theme = theme or get_theme()
+    vars_block = _LIGHT_VARS if theme == "light" else _DARK_VARS
+    st.markdown(SHARED_CSS.replace("__ROOT_VARS__", vars_block), unsafe_allow_html=True)

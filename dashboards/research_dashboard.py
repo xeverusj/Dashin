@@ -191,7 +191,7 @@ def _render_task_card(task: dict, user: dict, org_id: int, user_id: int):
                     <span class="{deadline_class}">📅 {deadline_str or 'No deadline'}</span>
                     <span>🎯 {completed}/{target} leads</span>
                 </div>
-                {f'<div style="margin-top:6px;font-size:12px;color:#C62828;">↩ Revision needed: {rejection_note}</div>' if rejection_note and status != 'approved' else ''}
+                {f'<div style="margin-top:6px;font-size:12px;color:var(--error);">↩ Revision needed: {rejection_note}</div>' if rejection_note and status != 'approved' else ''}
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;">
                 <span class="priority-badge priority-{priority}">{priority}</span>
