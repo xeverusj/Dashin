@@ -7,7 +7,7 @@ external scraping framework dependency.
 
 Supported:
   Selector(html_string)              — parse HTML
-  .css('selector')                   — CSS selection → SelectorList of Selector objects
+  .css('selector')                   — CSS selection · SelectorList of Selector objects
   .css('selector::text')             — text content of each match
   .css('selector::attr(name)')       — attribute value of each match
   .css('*::text')                    — all text nodes in subtree
@@ -312,7 +312,7 @@ class Selector:
         Example:
             sel.css('table').get()   # or sel itself if it IS a <table>
             sel.to_dict()
-            # → [{"Name": "Alice", "Company": "Acme"}, ...]
+            # · [{"Name": "Alice", "Company": "Acme"}, ...]
         """
         if self._el is None:
             return []
@@ -342,7 +342,7 @@ class Selector:
         within its document tree.
 
         Strategy (most-specific to least):
-          1. If element has a unique id → '#id'
+          1. If element has a unique id · '#id'
           2. Otherwise build a path of 'tag.class:nth-child(n)' steps
              walking up the tree to the root.
 

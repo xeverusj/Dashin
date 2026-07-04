@@ -87,21 +87,21 @@ def render(user: dict):
             <div class="admin-sub">Admin Panel · {tier_label} Plan</div>
         </div>
         <div>
-            <span class="stat-chip">👥 {users} users</span>
-            <span class="stat-chip">🏢 {clients} clients</span>
-            <span class="stat-chip">🧑 {leads:,} leads</span>
+            <span class="stat-chip">{users} users</span>
+            <span class="stat-chip">{clients} clients</span>
+            <span class="stat-chip">{leads:,} leads</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     tab1, tab2, tab_prev, tab3, tab4, tab5, tab6 = st.tabs([
-        "👥 Users",
-        "🏢 Clients",
-        "👁 Preview Client",
-        "🏛 Client Orgs",
-        "🔗 Invite Links",
-        "⚙️ Org Settings",
-        "🧠 Site Library",
+        "Users",
+        "Clients",
+        "Preview Client",
+        "Client Orgs",
+        "Invite Links",
+        "Org Settings",
+        "Site Library",
     ])
 
     with tab1:
@@ -131,7 +131,7 @@ def _render_client_preview(org_id: int, admin_user: dict):
     (using one of the client's portal users when available, so notifications and
     lead visibility match). It's a live view of their read-only portal.
     """
-    st.markdown("#### 👁 Preview a client's portal")
+    st.markdown("#### Preview a client's portal")
     st.caption("See exactly what a client sees when they log in — their report, "
                "email accounts, templates, leads and files.")
 
@@ -169,7 +169,7 @@ def _render_client_preview(org_id: int, admin_user: dict):
     who = (f"as portal user **{preview_user['email']}**" if portal_user
            else "with no portal user yet (using a stand-in — notifications/leads "
                 "may differ from the real client's view)")
-    st.warning(f"🔍 **Preview mode** — viewing **{picked}**'s portal {who}. "
+    st.warning(f"**Preview mode** — viewing **{picked}**'s portal {who}. "
                "This is read-only for you; nothing here is sent to the client.")
 
     st.markdown("---")
@@ -206,8 +206,8 @@ def _render_users(org_id: int, user_id: int):
                 if role_filter == "All" or u["role"] == role_filter]
 
     for u in filtered:
-        active_badge = "🟢" if u["is_active"] else "🔴"
-        client_str   = f" → {u['client_name']}" if u.get("client_name") else ""
+        active_badge = "" if u["is_active"] else ""
+        client_str   = f" · {u['client_name']}" if u.get("client_name") else ""
 
         col1, col2 = st.columns([3, 1])
         with col1:
@@ -375,7 +375,7 @@ def _render_clients(org_id: int, user_id: int):
     conn.close()
 
     for c in clients:
-        active = "🟢" if c["is_active"] else "🔴"
+        active = "" if c["is_active"] else ""
         st.markdown(f"""
         <div class="client-card">
             <div style="display:flex;justify-content:space-between;">
@@ -395,7 +395,7 @@ def _render_clients(org_id: int, user_id: int):
         with st.expander("Edit client"):
             _render_edit_client(c, org_id)
 
-        with st.expander("📧 Email accounts (client sees these read-only)"):
+        with st.expander("Email accounts (client sees these read-only)"):
             _render_client_email_accounts(c, org_id, user_id)
 
     st.markdown("---")
@@ -615,7 +615,7 @@ def _render_client_orgs(org_id: int, user_id: int, user: dict):
     if child_orgs:
         st.markdown(f"**{len(child_orgs)} client organisation(s)**")
         for co in child_orgs:
-            status_icon = "🟢" if co['is_active'] else "🔴"
+            status_icon = "" if co['is_active'] else ""
             sub_tier = co.get('subscription_tier', 'client_direct')
             st.markdown(f"""
             <div class="client-card">
@@ -625,9 +625,9 @@ def _render_client_orgs(org_id: int, user_id: int, user: dict):
                         <div class="client-meta">
                             Type: Client Org ·
                             Tier: {sub_tier.replace('_',' ').title()} ·
-                            👥 {co['user_count']} users ·
-                            🧑 {co['lead_count']:,} leads ·
-                            📁 {co['active_campaigns']} active campaigns
+                            {co['user_count']} users ·
+                            {co['lead_count']:,} leads ·
+                            {co['active_campaigns']} active campaigns
                         </div>
                     </div>
                 </div>
@@ -725,7 +725,7 @@ def _render_client_orgs(org_id: int, user_id: int, user: dict):
                     conn3.commit()
                     conn3.close()
 
-                    st.success(f"✅ Client org '{co_name}' created!")
+                    st.success(f"Client org '{co_name}' created!")
                     st.info(
                         f"**Login credentials for {contact_name}:**\n\n"
                         f"Email: `{contact_email.lower().strip()}`\n\n"
@@ -787,7 +787,7 @@ def _render_scraper_tokens(org_id: int):
     from services import token_service as ts
 
     st.markdown("---")
-    st.subheader("🔑 Desktop Scraper Tokens")
+    st.subheader("Desktop Scraper Tokens")
     st.caption("A token lets the desktop scraper push scraped leads straight into "
                "this org's inventory. Give one token per client machine. The full "
                "token is shown once at creation — copy it then.")
@@ -813,7 +813,7 @@ def _render_scraper_tokens(org_id: int):
         return
     for t in tokens:
         cols = st.columns([3, 2, 2, 1])
-        status = "🔴 revoked" if t["revoked"] else "🟢 active"
+        status = "revoked" if t["revoked"] else "active"
         cols[0].markdown(f"**{t.get('label') or '(no label)'}** · {status}")
         cols[1].caption(f"created {(t.get('created_at') or '')[:10]}")
         cols[2].caption(f"last used {(t.get('last_used_at') or '—')[:10]}")

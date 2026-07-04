@@ -57,7 +57,7 @@ def render(user: dict):
     <div class="sa-header">
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-                <div class="sa-title">⚡ Dashin Platform</div>
+                <div class="sa-title">Dashin Platform</div>
                 <div class="sa-sub">Super Admin · {date.today().strftime('%d %b %Y')}</div>
             </div>
             <span class="sa-badge">Super Admin</span>
@@ -66,13 +66,13 @@ def render(user: dict):
     """, unsafe_allow_html=True)
 
     tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "🏢 All Orgs",
-        "🏛 Org Hierarchy",
-        "💰 AI Costs",
-        "➕ New Org",
-        "📊 Platform Stats",
-        "🧠 Site Library",
-        "💾 Backups",
+        "All Orgs",
+        "Org Hierarchy",
+        "AI Costs",
+        "New Org",
+        "Platform Stats",
+        "Site Library",
+        "Backups",
     ])
 
     with tab1:
@@ -135,8 +135,8 @@ def _render_all_orgs(dark: bool = True):
         pct         = u.get("pct_used", 0) or 0
         bar_cls     = ("ai-red" if pct >= 80 else
                        "ai-yellow" if pct >= 60 else "ai-green")
-        active_icon = "🟢" if org.get("is_active") else "🔴"
-        alert       = " ⚠" if u.get("alert_80_sent") else ""
+        active_icon = "" if org.get("is_active") else ""
+        alert       = "" if u.get("alert_80_sent") else ""
         budget      = org.get("ai_budget_usd") or 0
         cost        = u.get("cost_usd") or 0
 
@@ -149,10 +149,10 @@ def _render_all_orgs(dark: bool = True):
                         <span class="tier-chip tier-{org.get('tier','starter')}">{org.get('tier','')}</span>
                     </div>
                     <div class="org-meta">
-                        👥 {org.get('user_count',0)} users ·
-                        🏢 {org.get('client_count',0)} clients ·
-                        🧑 {org.get('lead_count',0):,} leads ·
-                        📁 {org.get('campaign_count',0)} campaigns
+                        {org.get('user_count',0)} users ·
+                        {org.get('client_count',0)} clients ·
+                        {org.get('lead_count',0):,} leads ·
+                        {org.get('campaign_count',0)} campaigns
                     </div>
                 </div>
                 <div style="text-align:right;min-width:140px;">
@@ -303,8 +303,8 @@ def _render_org_hierarchy(user: dict, dark: bool = True):
     for o in displayed:
         otype  = o.get('org_type', 'agency')
         badge_style, badge_label = ORG_TYPE_BADGE.get(otype, ('background:#333;color:#FFF;', otype.upper()))
-        status_icon = "🟢" if o.get('is_active') else "🔴"
-        parent_str  = f" ↳ {o['parent_name']}" if o.get('parent_name') else ""
+        status_icon = "" if o.get('is_active') else ""
+        parent_str  = f" {o['parent_name']}" if o.get('parent_name') else ""
 
         st.markdown(f"""
         <div class="org-card">
@@ -319,9 +319,9 @@ def _render_org_hierarchy(user: dict, dark: bool = True):
                         <span class="tier-chip tier-{o.get('tier','starter')}">{o.get('tier','')}</span>
                     </div>
                     <div class="org-meta">
-                        👥 {o.get('user_count',0)} users ·
-                        🧑 {o.get('lead_count',0):,} leads ·
-                        🏢 {o.get('client_count',0)} clients
+                        {o.get('user_count',0)} users ·
+                        {o.get('lead_count',0):,} leads ·
+                        {o.get('client_count',0)} clients
                         {parent_str}
                     </div>
                 </div>
@@ -415,7 +415,7 @@ def _render_ai_costs(dark: bool = True):
             "Used ($)":     round(u.get("cost_usd") or 0, 4),
             "Budget ($)":   u.get("budget_usd") or 0,
             "Used %":       f"{u.get('pct_used') or 0}%",
-            "Alert Sent":   "⚠ Yes" if u.get("alert_80_sent") else "No",
+            "Alert Sent":   "Yes" if u.get("alert_80_sent") else "No",
             "Period Start": (u.get("period_start") or "")[:10],
         } for u in sorted(all_usage,
                           key=lambda x: x.get("pct_used") or 0,
@@ -542,7 +542,7 @@ def _render_new_org():
                           admin_email.lower().strip(), pw, now))
 
                     conn.commit()
-                    st.success(f"✅ Organisation '{org_name}' ({org_type}) created!")
+                    st.success(f"Organisation '{org_name}' ({org_type}) created!")
                     st.info(
                         f"**Admin login credentials:**\n\n"
                         f"Email: `{admin_email.lower().strip()}`\n\n"
@@ -624,7 +624,7 @@ def _render_backup_ui():
 
     col_btn, col_label = st.columns([1, 3])
     with col_btn:
-        do_backup = st.button("💾 Create Backup Now", use_container_width=True)
+        do_backup = st.button("Create Backup Now", use_container_width=True)
     with col_label:
         label = st.text_input("Label (optional)", placeholder="pre-migration", label_visibility="collapsed")
 

@@ -447,13 +447,13 @@ def _render_agency_view(user):
 
     st.markdown(f"""
     <div style="margin-bottom:24px;">
-      <div class="rpt-title">📊 Campaign Report Builder</div>
+      <div class="rpt-title">Campaign Report Builder</div>
       <div class="rpt-subtitle">Create and publish performance reports for clients</div>
     </div>""", unsafe_allow_html=True)
 
     clients = _get_clients(org_id)
     if not clients:
-        st.warning("No clients found. Create a client first in Admin → Clients.")
+        st.warning("No clients found. Create a client first in Admin · Clients.")
         return
 
     col_sel, col_rpt, col_btn = st.columns([2, 3, 1])
@@ -464,15 +464,15 @@ def _render_agency_view(user):
 
     reports = _get_reports(org_id, client_id)
     with col_rpt:
-        rpt_opts = {f"{r['title']} ({r['date_range'] or 'No date'})  {'✅' if r['is_published'] else '📝'}": r["id"]
+        rpt_opts = {f"{r['title']} ({r['date_range'] or 'No date'})  {'' if r['is_published'] else ''}": r["id"]
                     for r in reports}
-        rpt_opts = {"➕ Create new report": None} | rpt_opts
+        rpt_opts = {"Create new report": None} | rpt_opts
         chosen_rpt_label = st.selectbox("Report", list(rpt_opts.keys()), key="rpt_select")
         report_id = rpt_opts[chosen_rpt_label]
 
     with col_btn:
         st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-        if report_id and st.button("🗑 Delete", key="rpt_del"):
+        if report_id and st.button("Delete", key="rpt_del"):
             conn = get_connection()
             conn.execute("DELETE FROM report_crm_contacts WHERE report_id=?", (report_id,))
             conn.execute("DELETE FROM report_weekly_campaigns WHERE report_id=?", (report_id,))
@@ -495,7 +495,7 @@ def _render_agency_view(user):
     pub_col, dl_col = st.columns([3, 1])
     with pub_col:
         published = bool(report["is_published"])
-        lbl = "✅ Published — visible to client" if published else "📝 Draft — not visible to client"
+        lbl = "Published — visible to client" if published else "Draft — not visible to client"
         if st.toggle(lbl, value=published, key="rpt_pub"):
             if not published:
                 _run("UPDATE campaign_reports SET is_published=1, updated_at=datetime('now') WHERE id=?", (report_id,))
@@ -513,7 +513,7 @@ def _render_agency_view(user):
     contacts = _get_crm_contacts(report_id)
     with dl_col:
         html_content = _html_report(report, camps, periods, contacts)
-        st.download_button("⬇️ HTML",
+        st.download_button("HTML",
                            data=html_content.encode("utf-8"),
                            file_name=f"report_{report_id}.html",
                            mime="text/html",
@@ -526,13 +526,13 @@ def _render_agency_view(user):
         p1, p2 = st.columns(2)
         with p1:
             st.download_button(
-                "⬇ Full report (PDF)",
+                "Full report (PDF)",
                 data=build_full_report_pdf(rpt_d, camp_d, crm_d, insights),
                 file_name=f"{(rpt_d.get('client_name') or 'client')}_full_report.pdf",
                 mime="application/pdf", use_container_width=True)
         with p2:
             st.download_button(
-                "⬇ One-pager (PDF)",
+                "One-pager (PDF)",
                 data=build_onepager_pdf(rpt_d, camp_d, insights),
                 file_name=f"{(rpt_d.get('client_name') or 'client')}_one_pager.pdf",
                 mime="application/pdf", use_container_width=True)
@@ -542,7 +542,7 @@ def _render_agency_view(user):
     st.markdown("---")
 
     tab_sum, tab_camps, tab_weekly, tab_crm, tab_analysis = st.tabs([
-        "📋 Summary", "📈 Campaigns", "📅 Weekly", "👥 CRM Pipeline", "📝 Analysis"
+        "Summary", "Campaigns", "Weekly", "CRM Pipeline", "Analysis"
     ])
 
     # ── Tab: Summary ──────────────────────────────────────────────────────────
@@ -571,7 +571,7 @@ def _render_create_report(org_id, client_id, user):
     with st.form("new_report_form"):
         title = st.text_input("Report Title", value="Campaign Performance Report")
         date_range = st.text_input("Date Range", placeholder="e.g. January 12 – May 17, 2026")
-        submitted = st.form_submit_button("✅ Create Report")
+        submitted = st.form_submit_button("Create Report")
     if submitted:
         rid = _run("""INSERT INTO campaign_reports
                       (org_id, client_id, title, date_range, created_by)
@@ -592,8 +592,8 @@ def _render_summary_edit(report, report_id):
             meetings  = st.number_input("Meetings Booked", min_value=0, value=int(report["total_meetings"] or 0))
             crm_count = st.number_input("CRM Contacts (override)", min_value=0, value=int(report["crm_count"] or 0))
 
-        st.caption("💡 Email totals are auto-calculated from the Campaigns tab. Override meetings & CRM count here.")
-        if st.form_submit_button("💾 Save Header"):
+        st.caption("Email totals are auto-calculated from the Campaigns tab. Override meetings & CRM count here.")
+        if st.form_submit_button("Save Header"):
             _run("""UPDATE campaign_reports SET title=?, date_range=?, total_meetings=?,
                     updated_at=datetime('now') WHERE id=?""",
                  (title, date_range, meetings, report_id))
@@ -639,7 +639,7 @@ def _render_campaigns_edit(report_id):
             key="camp_editor",
         )
 
-        if st.button("💾 Save Campaign Table"):
+        if st.button("Save Campaign Table"):
             conn = get_connection()
             for i, row in edited.iterrows():
                 camp_id = df_edit.iloc[i]["id"]
@@ -668,7 +668,7 @@ def _render_campaigns_edit(report_id):
         inter= c5.number_input("Interested", min_value=0, value=0)
         stat = c6.selectbox("Status", ["Active","Best","Strong","Good","Marginal","Low","Weak","Dead","Paused"])
         meet = st.number_input("Meetings", min_value=0, value=0)
-        if st.form_submit_button("➕ Add Campaign"):
+        if st.form_submit_button("Add Campaign"):
             if n:
                 total = cold + fups
                 rate  = round(resp / total * 100, 2) if total else 0
@@ -688,7 +688,7 @@ def _render_weekly_edit(report_id):
 
     periods = _get_weekly_periods(report_id)
     for p in periods:
-        with st.expander(f"📅 {p['period_label']}  —  {p['total_emails']:,} emails · {p['total_responses']} responses · {p['total_interested']} interested"):
+        with st.expander(f"{p['period_label']}  —  {p['total_emails']:,} emails · {p['total_responses']} responses · {p['total_interested']} interested"):
             wcamps = _get_weekly_camps(p["id"])
             if wcamps:
                 import pandas as pd
@@ -698,7 +698,7 @@ def _render_weekly_edit(report_id):
                     use_container_width=True, num_rows="fixed",
                     key=f"wc_{p['id']}",
                 )
-                if st.button("💾 Save", key=f"wc_save_{p['id']}"):
+                if st.button("Save", key=f"wc_save_{p['id']}"):
                     conn = get_connection()
                     for i, row in edited_wc.iterrows():
                         wid = df_wc.iloc[i]["id"]
@@ -729,7 +729,7 @@ def _render_weekly_edit(report_id):
                 wf   = w3.number_input("Follow-ups", min_value=0, value=0, key=f"wc_{p['id']}_f")
                 wr   = w4.number_input("Responses",  min_value=0, value=0, key=f"wc_{p['id']}_r")
                 wi   = w5.number_input("Interested", min_value=0, value=0, key=f"wc_{p['id']}_i")
-                if st.form_submit_button("➕ Add"):
+                if st.form_submit_button("Add"):
                     if wn:
                         wtotal = wc + wf
                         wrate  = round(wr / wtotal * 100, 2) if wtotal else 0
@@ -741,7 +741,7 @@ def _render_weekly_edit(report_id):
                         st.rerun()
 
             # Delete period
-            if st.button("🗑 Delete this period", key=f"del_period_{p['id']}"):
+            if st.button("Delete this period", key=f"del_period_{p['id']}"):
                 conn = get_connection()
                 conn.execute("DELETE FROM report_weekly_campaigns WHERE period_id=?", (p["id"],))
                 conn.execute("DELETE FROM report_weekly_periods WHERE id=?", (p["id"],))
@@ -752,7 +752,7 @@ def _render_weekly_edit(report_id):
     st.markdown("##### Add Weekly Period")
     with st.form("add_period_form"):
         pl = st.text_input("Period Label", placeholder="e.g. Jan 12–18 · 469 emails · 25 responses")
-        if st.form_submit_button("➕ Add Period"):
+        if st.form_submit_button("Add Period"):
             if pl:
                 next_ord = len(periods)
                 _run("""INSERT INTO report_weekly_periods
@@ -792,7 +792,7 @@ def _render_crm_edit(report_id):
             },
             key="crm_editor",
         )
-        if st.button("💾 Save CRM Table"):
+        if st.button("Save CRM Table"):
             conn = get_connection()
             for i, row in edited_c.iterrows():
                 cid = df_show.iloc[i]["id"]
@@ -823,10 +823,10 @@ def _render_crm_edit(report_id):
         r2c1, r2c2, r2c3, r2c4 = st.columns(4)
         email  = r2c1.text_input("Email")
         web    = r2c2.text_input("Website")
-        status = r2c3.text_input("Status", placeholder="e.g. Booked ✓")
+        status = r2c3.text_input("Status", placeholder="e.g. Booked")
         met    = r2c4.text_input("Met?")
         notes  = st.text_area("Notes", height=60)
-        if st.form_submit_button("➕ Add Contact"):
+        if st.form_submit_button("Add Contact"):
             if name:
                 _run("""INSERT INTO report_crm_contacts
                         (report_id, campaign_name, contact_name, company, role,
@@ -858,12 +858,12 @@ def _render_analysis_edit(report, report_id):
                 new_body   = st.text_area("Body",   value=s.get("body",""),  key=f"ab_{idx}", height=100)
                 new_action = st.text_input("Action Line", value=s.get("action",""), key=f"aa_{idx}")
                 col_save, col_del = st.columns(2)
-                if col_save.form_submit_button("💾 Save"):
+                if col_save.form_submit_button("Save"):
                     existing[idx] = {"title": new_title, "body": new_body, "action": new_action}
                     _run("UPDATE campaign_reports SET analysis_notes=?, updated_at=datetime('now') WHERE id=?",
                          (json.dumps(existing), report_id))
                     st.rerun()
-            if st.button("🗑 Delete Section", key=f"del_sec_{idx}"):
+            if st.button("Delete Section", key=f"del_sec_{idx}"):
                 existing.pop(idx)
                 _run("UPDATE campaign_reports SET analysis_notes=?, updated_at=datetime('now') WHERE id=?",
                      (json.dumps(existing), report_id))
@@ -875,7 +875,7 @@ def _render_analysis_edit(report, report_id):
         atitle  = st.text_input("Title", placeholder="e.g. TOP PERFORMER: MALTA (3.8% RATE)")
         abody   = st.text_area("Body",   placeholder="Analysis text...", height=100)
         aaction = st.text_input("Action Line", placeholder="e.g. Prioritise Malta follow-ups now...")
-        if st.form_submit_button("➕ Add Section"):
+        if st.form_submit_button("Add Section"):
             if atitle:
                 existing.append({"title": atitle, "body": abody, "action": aaction})
                 _run("UPDATE campaign_reports SET analysis_notes=?, updated_at=datetime('now') WHERE id=?",
@@ -899,7 +899,7 @@ def _render_client_view(user):
     if not reports:
         st.markdown(f"""
         <div class="rpt-section" style="text-align:center; padding:60px 20px;">
-          <div style="font-size:48px; margin-bottom:16px;">📊</div>
+          <div style="font-size:48px; margin-bottom:16px;"></div>
           <div class="rpt-title" style="font-size:22px;">No reports published yet</div>
           <div class="rpt-subtitle" style="margin-top:8px;">
             Your campaign report will appear here once it's ready.
@@ -935,7 +935,7 @@ def _render_client_view(user):
         </div>""", unsafe_allow_html=True)
     with col_dl:
         st.markdown("<div style='height:36px'></div>", unsafe_allow_html=True)
-        st.download_button("⬇️ Download Report",
+        st.download_button("Download Report",
                            data=dl_html.encode("utf-8"),
                            file_name="campaign_report.html",
                            mime="text/html",
@@ -1032,7 +1032,7 @@ def _render_client_view(user):
               </div>
             </div>""", unsafe_allow_html=True)
 
-            with st.expander(f"✏️ Update: {ct.get('contact_name','')}"):
+            with st.expander(f"Update: {ct.get('contact_name','')}"):
                 with st.form(f"client_crm_{ct['id']}"):
                     new_status = st.selectbox("Lead Status",
                                               LEAD_STATUSES,
@@ -1042,7 +1042,7 @@ def _render_client_view(user):
                     new_notes = st.text_area("Your Notes",
                                              value=ct.get("client_notes","") or "",
                                              height=80, key=f"cn_{ct['id']}")
-                    if st.form_submit_button("💾 Save"):
+                    if st.form_submit_button("Save"):
                         _run("""UPDATE report_crm_contacts SET
                                 lead_status=?, client_notes=?, updated_at=datetime('now')
                                 WHERE id=?""",

@@ -56,7 +56,7 @@ div[data-testid="stAlert"] p { color: var(--text-2) !important; }
 div[data-baseweb="notification"] { background: var(--surface-2) !important; border-color: var(--border) !important; }
 hr { border-color: var(--border) !important; }
 
-/* Custom HTML card/text classes → palette variables (kills hardcoded drift) */
+/* Custom HTML card/text classes · palette variables (kills hardcoded drift) */
 .page-title, .sec-hd, .sec-header, .stat-val, .kpi-val, .kpi-value,
 .card-title, .task-title, .camp-title, .task-review-title, .detail-name,
 .user-name, .list-card-name, .org-name, .cost-num, .tbl td.n,

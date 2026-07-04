@@ -261,21 +261,21 @@ def render(user: dict):
     # ── Notifications bell ────────────────────────────────────────────
     unread = unread_count(user_id)
     if unread > 0:
-        if st.button(f"🔔 {unread} new notification{'s' if unread > 1 else ''}",
+        if st.button(f"{unread} new notification{'s' if unread > 1 else ''}",
                      type="secondary"):
             mark_all_read(user_id)
             st.rerun()
 
     # ── Tabs ──────────────────────────────────────────────────────────
     tab1, tab2, tab3, tab_report, tab_email, tab_tmpl, tab4, tab5 = st.tabs([
-        "🏠 Home",
-        "👥 My Leads",
-        "📁 Campaigns",
-        "📊 Campaign Report",
-        "📧 Email Accounts",
-        "📝 Templates",
-        "📎 Files",
-        "💬 Notes",
+        "Home",
+        "My Leads",
+        "Campaigns",
+        "Campaign Report",
+        "Email Accounts",
+        "Templates",
+        "Files",
+        "Notes",
     ])
 
     with tab1:
@@ -304,7 +304,7 @@ def render(user: dict):
 
 def _render_email_accounts(org_id: int, client_id: int):
     from services.client_portal_service import list_email_accounts
-    st.markdown("#### 📧 Your Email Accounts")
+    st.markdown("#### Your Email Accounts")
     st.caption("The mailboxes your campaigns send from. Passwords are hidden — "
                "click **Show** to reveal.")
     accounts = list_email_accounts(org_id, client_id)
@@ -317,7 +317,7 @@ def _render_email_accounts(org_id: int, client_id: int):
             top = st.columns([3, 2])
             with top[0]:
                 st.markdown(f"**{a.get('label') or a.get('email_address')}**")
-                st.markdown(f"✉️ `{a.get('email_address','')}`")
+                st.markdown(f"`{a.get('email_address','')}`")
                 if a.get("provider"):
                     st.caption(f"Provider: {a['provider']}")
             with top[1]:
@@ -327,14 +327,14 @@ def _render_email_accounts(org_id: int, client_id: int):
                               key=f"pw_{a['id']}", disabled=True,
                               label_visibility="collapsed")
                 if a.get("webmail_url"):
-                    st.markdown(f"[Open webmail →]({a['webmail_url']})")
+                    st.markdown(f"[Open webmail]({a['webmail_url']})")
 
 
 # ── TEMPLATES (own page) ──────────────────────────────────────────────────────
 
 def _render_templates(org_id: int, client_id: int, user_id: int):
     from services.client_portal_service import get_client_templates
-    st.markdown("#### 📝 Email Templates")
+    st.markdown("#### Email Templates")
     st.caption("The templates your campaigns use.")
     templates = get_client_templates(org_id, client_id)
     if not templates:
@@ -443,7 +443,7 @@ def _render_home(org_id: int, client_id: int, client, user_id: int):
 
     # ── Upcoming meetings ─────────────────────────────────────────────
     with col_left:
-        st.markdown("#### 📅 Confirmed Meetings")
+        st.markdown("#### Confirmed Meetings")
         if meetings:
             for m in meetings:
                 try:
@@ -473,7 +473,7 @@ def _render_home(org_id: int, client_id: int, client, user_id: int):
 
     # ── Campaign progress ─────────────────────────────────────────────
     with col_right:
-        st.markdown("#### 📊 Campaign Progress")
+        st.markdown("#### Campaign Progress")
         if recent_campaigns:
             for c in recent_campaigns:
                 chip_cls = {
@@ -517,11 +517,11 @@ def _render_home(org_id: int, client_id: int, client, user_id: int):
     # ── Recent files ──────────────────────────────────────────────────
     if recent_files:
         st.markdown("---")
-        st.markdown("#### 📎 Recently Shared Files")
+        st.markdown("#### Recently Shared Files")
         for f in recent_files:
-            icon = {"template": "📝", "case_study": "📄",
-                    "brief": "📋", "report": "📊"}.get(
-                f["file_type"], "📎")
+            icon = {"template": "", "case_study": "",
+                    "brief": "", "report": ""}.get(
+                f["file_type"], "")
             st.markdown(f"""
             <div class="file-card">
                 <div style="display:flex;align-items:center;">
@@ -541,7 +541,7 @@ def _render_home(org_id: int, client_id: int, client, user_id: int):
     notifs = get_all(user_id, limit=5)
     if notifs:
         st.markdown("---")
-        st.markdown("#### 🔔 Recent Notifications")
+        st.markdown("#### Recent Notifications")
         for n in notifs[:3]:
             st.markdown(f"""
             <div class="notif-card">
@@ -645,7 +645,7 @@ def _render_leads(org_id: int, client_id: int, user_id: int):
                   if not r["email"] or "@" not in (r["email"] or "")]
 
     t1, t2 = st.tabs([
-        f"✉ Email Found ({len(with_email)})",
+        f"Email Found ({len(with_email)})",
         f"◯ No Email ({len(no_email)})",
     ])
 
@@ -686,7 +686,7 @@ def _render_lead_table(leads: list, show_email: bool,
     } for r in leads])
 
     st.download_button(
-        f"⬇ Export CSV",
+        f"Export CSV",
         data=df.to_csv(index=False),
         file_name=f"leads_{campaign_name}_{date.today()}.csv",
         mime="text/csv",
@@ -706,7 +706,7 @@ def _render_lead_table(leads: list, show_email: bool,
                    f'style="color:#0077B5;">LinkedIn</a>'
                    if li_url else "—")
         meeting = r.get("meeting_date","") or ""
-        meet_cell = f'✅ {meeting[:10]}' if meeting else ""
+        meet_cell = f'{meeting[:10]}' if meeting else ""
 
         rows_html += f"""
         <tr>
@@ -767,7 +767,7 @@ def _render_campaigns(org_id: int, client_id: int, user_id: int):
 
     for camp in camps:
         with st.expander(
-            f"📁 {camp['name']} — "
+            f"{camp['name']} — "
             f"{camp['lead_count']} leads · "
             f"{camp['meetings_booked'] or 0} meetings booked",
             expanded=False
@@ -795,7 +795,7 @@ def _render_campaigns(org_id: int, client_id: int, user_id: int):
             xlsx = generate_xlsx(camp["id"], camp["name"], "")
             if xlsx:
                 st.download_button(
-                    "⬇ Download Report (.xlsx)",
+                    "Download Report (.xlsx)",
                     data=xlsx,
                     file_name=f"{camp['name']}_report.xlsx",
                     mime="application/vnd.openxmlformats-officedocument"
@@ -829,16 +829,16 @@ def _render_files(org_id: int, client_id: int, user_id: int):
     """, (org_id, client_id)).fetchall()
     conn.close()
 
-    t1, t2, t3 = st.tabs(["📎 Files", "📝 Templates", "⬆ Upload"])
+    t1, t2, t3 = st.tabs(["Files", "Templates", "Upload"])
 
     with t1:
         if not files:
             st.info("No files shared yet.")
         else:
             for f in files:
-                icon = {"template": "📝", "case_study": "📄",
-                        "brief": "📋", "report": "📊"}.get(
-                    f["file_type"], "📎")
+                icon = {"template": "", "case_study": "",
+                        "brief": "", "report": ""}.get(
+                    f["file_type"], "")
                 st.markdown(f"""
                 <div class="file-card">
                     <div style="display:flex;align-items:center;">
@@ -857,7 +857,7 @@ def _render_files(org_id: int, client_id: int, user_id: int):
 
                 if f.get("file_data"):
                     st.download_button(
-                        f"⬇ Download",
+                        f"Download",
                         data=f["file_data"],
                         file_name=f["file_name"],
                         key=f"dl_file_{f['id']}",
@@ -869,9 +869,9 @@ def _render_files(org_id: int, client_id: int, user_id: int):
         else:
             for t in templates:
                 approval_icon = {
-                    "approved": "🟢", "pending": "🟡",
-                    "rejected": "🔴", "changes_requested": "🟠"
-                }.get(t["approval_status"], "⚪")
+                    "approved": "", "pending": "",
+                    "rejected": "", "changes_requested": ""
+                }.get(t["approval_status"], "")
 
                 with st.expander(
                     f"Step {t['sequence_step']} — {t['campaign_name']} "
@@ -889,7 +889,7 @@ def _render_files(org_id: int, client_id: int, user_id: int):
                     if t["approval_status"] == "pending":
                         col1, col2 = st.columns(2)
                         with col1:
-                            if st.button("✅ Approve Template",
+                            if st.button("Approve Template",
                                          key=f"app_tmpl_{t['id']}",
                                          use_container_width=True):
                                 _approve_template(t["id"], user_id)

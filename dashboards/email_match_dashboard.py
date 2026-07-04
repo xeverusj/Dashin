@@ -37,7 +37,7 @@ def render(user: dict):
     role = user.get("role", "researcher")
     org_id = user.get("org_id", 1)
     if role not in ALLOWED_ROLES:
-        st.error("🚫 You don't have permission to access this page.")
+        st.error("You don't have permission to access this page.")
         return
 
     st.markdown("## Email List Matching")
@@ -110,7 +110,7 @@ def render(user: dict):
                  f"  ·  **{report['unmatched']}** parked in the unmatched pool.")
 
         if report["needs_review"]:
-            st.warning("⚠ **Needs review:** these emails matched a company with several "
+            st.warning("**Needs review:** these emails matched a company with several "
                        "people — pick the right person manually. Candidate lead IDs are "
                        "in the detail table below (ranked by name similarity).")
 
@@ -118,6 +118,6 @@ def render(user: dict):
         if len(det):
             det["candidates"] = det["candidates"].apply(lambda x: ", ".join(map(str, x)) if x else "")
             st.dataframe(det, use_container_width=True, hide_index=True)
-            st.download_button("⬇ Download match report",
+            st.download_button("Download match report",
                                det.to_csv(index=False).encode("utf-8-sig"),
                                file_name="email_match_report.csv", mime="text/csv")

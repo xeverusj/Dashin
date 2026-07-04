@@ -42,7 +42,7 @@ def render(user: dict):
     org_id = user.get("org_id", 1)
 
     if role not in ALLOWED_ROLES:
-        st.error("🚫 You don't have permission to access this page.")
+        st.error("You don't have permission to access this page.")
         return
 
     st.markdown("## AI Scoring — use your own AI")
@@ -130,11 +130,11 @@ def render(user: dict):
             )
             c1, c2 = st.columns(2)
             with c1:
-                st.download_button("⬇ Prompt (paste into your AI)",
+                st.download_button("Prompt (paste into your AI)",
                                    st.session_state["scoring_prompt_txt"],
                                    file_name="scoring_prompt.txt", mime="text/plain")
             with c2:
-                st.download_button("⬇ Data CSV (attach to your AI)",
+                st.download_button("Data CSV (attach to your AI)",
                                    st.session_state["scoring_csv_bytes"],
                                    file_name="scoring_input.csv", mime="text/csv")
 
@@ -159,7 +159,7 @@ def render(user: dict):
 
         # The validation disclaimer the client asked for — front and centre.
         st.warning(
-            "⚠ **These scores were produced by an AI and may contain mistakes.** "
+            "**These scores were produced by an AI and may contain mistakes.** "
             "Treat this as a first-pass ranking, not a final verdict — give the top "
             "tiers (and anything flagged **not_site_verified** or **contradiction**) "
             "a second validation pass before acting on them."
@@ -179,6 +179,6 @@ def render(user: dict):
         st.dataframe(res_df[show_cols], use_container_width=True, hide_index=True)
 
         st.download_button(
-            "⬇ Download scored + ranked CSV",
+            "Download scored + ranked CSV",
             res_df[show_cols].to_csv(index=False).encode("utf-8-sig"),
             file_name="scored_ranked.csv", mime="text/csv")

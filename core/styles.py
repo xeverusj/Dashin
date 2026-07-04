@@ -59,7 +59,7 @@ h1, h2, h3,
     font-family: var(--font-display) !important;
     letter-spacing: -0.02em !important;
 }
-/* Metric numbers read as data → mono, tabular */
+/* Metric numbers read as data · mono, tabular */
 [data-testid="stMetricValue"],
 .metric-value, .stat-num, .kpi-num {
     font-family: var(--font-mono) !important;

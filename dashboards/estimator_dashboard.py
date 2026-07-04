@@ -56,10 +56,10 @@ def render(user: dict):
     """, unsafe_allow_html=True)
 
     tab1, tab2, tab3, tab4 = st.tabs([
-        "📊 This Week",
-        "🤖 AI Usage",
-        "💡 Savings",
-        "🔮 Forecast",
+        "This Week",
+        "AI Usage",
+        "Savings",
+        "Forecast",
     ])
 
     with tab1:
@@ -211,7 +211,7 @@ def _render_this_week(org_id: int, week_start: str, week_end: str):
         """, unsafe_allow_html=True)
 
     # Save snapshot
-    if st.button("💾 Save This Week's Snapshot"):
+    if st.button("Save This Week's Snapshot"):
         _save_snapshot(org_id, week_start, week_end,
                        fresh, reused, total_cost, researcher_data)
         st.success("Snapshot saved!")
@@ -301,11 +301,11 @@ def _render_ai_usage(org_id: int):
     </div>
     """, unsafe_allow_html=True)
 
-    st.caption(f"Period: {usage.get('period_start','')[:10]} → "
+    st.caption(f"Period: {usage.get('period_start','')[:10]} · "
                f"{usage.get('period_end','')[:10]}")
 
     if pct >= 80:
-        st.warning("⚠ Approaching AI budget limit. "
+        st.warning("Approaching AI budget limit. "
                    "Contact Dashin to upgrade or wait for next billing period.")
 
     # Feature breakdown

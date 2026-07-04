@@ -275,7 +275,7 @@ def render_detail_panel(lead, user):
         </div>
         <div class="detail-field">
           <div class="detail-field-label">LinkedIn</div>
-          <div class="detail-field-val">{('<a href="'+lead['linkedin_url']+'" target="_blank">View ↗</a>') if lead.get('linkedin_url') else '—'}</div>
+          <div class="detail-field-val">{('<a href="'+lead['linkedin_url']+'" target="_blank">View</a>') if lead.get('linkedin_url') else '—'}</div>
         </div>
         <div class="detail-field">
           <div class="detail-field-label">Country</div>
@@ -327,12 +327,12 @@ def render_detail_panel(lead, user):
         st.markdown(f"""
         <div style="margin-bottom:12px">
           <div style="font-size:10px;color:var(--error);text-transform:uppercase;letter-spacing:1.2px;
-            font-weight:700;margin-bottom:6px">⚠ Already Used For</div>
+            font-weight:700;margin-bottom:6px">Already Used For</div>
           {cl_html}
         </div>
         """, unsafe_allow_html=True)
     else:
-        st.markdown('<div class="conflict-ok">✓ Not used for any client yet — safe to use</div>',
+        st.markdown('<div class="conflict-ok">Not used for any client yet — safe to use</div>',
                     unsafe_allow_html=True)
 
     if lead.get('notes'):
@@ -350,7 +350,7 @@ def render_detail_panel(lead, user):
         cols = st.columns(3)
         with cols[0]:
             if lead.get("status") != "archived":
-                if st.button("📦 Archive", key=f"arch_{lead['id']}", use_container_width=True):
+                if st.button("Archive", key=f"arch_{lead['id']}", use_container_width=True):
                     st.session_state["archive_lead_id"] = lead['id']
                     st.session_state["detail_lead"] = None
                     st.rerun()
@@ -361,13 +361,13 @@ def render_detail_panel(lead, user):
                     lead.get("status","new")),
                 key=f"st_{lead['id']}", label_visibility="collapsed")
         with cols[2]:
-            if st.button("✓ Update", key=f"upd_{lead['id']}", use_container_width=True, type="primary"):
+            if st.button("Update", key=f"upd_{lead['id']}", use_container_width=True, type="primary"):
                 update_lead_status(lead['id'], new_status)
                 st.success("Status updated")
                 st.session_state["detail_lead"] = None
                 st.rerun()
 
-    if st.button("✕ Close", key=f"close_{lead['id']}", type="secondary"):
+    if st.button("Close", key=f"close_{lead['id']}", type="secondary"):
         st.session_state["detail_lead"] = None
         st.rerun()
 
@@ -393,13 +393,13 @@ def render_archived_lists(user):
             if st.button("Create List", type="primary"):
                 if ln.strip():
                     create_archived_list(ln.strip(), li.strip(), ld.strip(), user['id'])
-                    st.success(f"✅ List '{ln}' created")
+                    st.success(f"List '{ln}' created")
                     st.rerun()
                 else:
                     st.error("List name is required.")
 
     if not lists:
-        st.markdown('<div class="empty-state"><div class="empty-icon">📂</div>No archived lists yet.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="empty-state"><div class="empty-icon"></div>No archived lists yet.</div>', unsafe_allow_html=True)
         return
 
     for lst in lists:
@@ -431,7 +431,7 @@ def render_archived_lists(user):
                 if df_data:
                     import pandas as pd
                     df = pd.DataFrame(df_data)
-                    st.download_button(f"⬇ Export CSV", df.to_csv(index=False).encode(),
+                    st.download_button(f"Export CSV", df.to_csv(index=False).encode(),
                                        f"{lst['name'].replace(' ','_')}.csv", "text/csv",
                                        key=f"exp_{lst['id']}", use_container_width=True)
 
@@ -491,14 +491,14 @@ def render_conflict_checker():
         col_c.metric("Already Used", len(conflicts), delta=f"-{conflict_pct}%", delta_color="inverse")
 
         if conflicts:
-            st.markdown(f'<div class="conflict-warn">⚠ {len(conflicts)} lead(s) already used for <b>{sel_client["name"]}</b> and will be excluded from any export.</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="conflict-warn">{len(conflicts)} lead(s) already used for <b>{sel_client["name"]}</b> and will be excluded from any export.</div>', unsafe_allow_html=True)
             # Show conflicting leads
             conflict_names = [l['full_name'] for l in leads_in_list if l['id'] in conflicts]
             with st.expander(f"View {len(conflicts)} conflicting lead(s)"):
                 for n in conflict_names:
-                    st.markdown(f'<div style="font-size:12px;color:var(--error);padding:3px 0">✕ {n}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="font-size:12px;color:var(--error);padding:3px 0">{n}</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="conflict-ok">✓ No conflicts — all {len(lead_ids)} leads are safe to use for {sel_client["name"]}.</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="conflict-ok">No conflicts — all {len(lead_ids)} leads are safe to use for {sel_client["name"]}.</div>', unsafe_allow_html=True)
 
 
 # ── MAIN LEADS TABLE ──────────────────────────────────────────────────────────
@@ -569,7 +569,7 @@ def render_leads_table(user):
             with bc1:
                 all_lists = get_archived_lists()
                 if all_lists:
-                    target_list = st.selectbox("Archive selected leads to list →",
+                    target_list = st.selectbox("Archive selected leads to list",
                         all_lists, format_func=lambda x: x['name'],
                         label_visibility="visible")
                 else:
@@ -581,14 +581,14 @@ def render_leads_table(user):
                     format_func=lambda i: next((l['full_name'] for l in leads if l['id']==i), str(i)))
             if multi_sel and target_list and st.button("Archive Selected", type="primary"):
                 archive_leads(multi_sel, target_list['id'])
-                st.success(f"✅ {len(multi_sel)} leads archived to '{target_list['name']}'")
+                st.success(f"{len(multi_sel)} leads archived to '{target_list['name']}'")
                 st.rerun()
 
     # Table
     st.markdown(f'<div style="font-size:12px;color:var(--text-3);margin-bottom:10px">{total:,} leads found</div>', unsafe_allow_html=True)
 
     if not leads:
-        st.markdown('<div class="empty-state"><div class="empty-icon">🔍</div>No leads match your filters.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="empty-state"><div class="empty-icon"></div>No leads match your filters.</div>', unsafe_allow_html=True)
         return
 
     # Build table HTML
@@ -615,7 +615,7 @@ def render_leads_table(user):
     </table></div>""", unsafe_allow_html=True)
 
     # Click to view detail via selectbox (Streamlit-compatible)
-    sel = st.selectbox("Click a lead to view details →",
+    sel = st.selectbox("Click a lead to view details",
         options=[None]+[l['id'] for l in leads],
         format_func=lambda i: "— Select a lead —" if i is None else next(
             (f"{l['full_name']} · {l.get('company_name','')}" for l in leads if l['id']==i), str(i)),
@@ -630,13 +630,13 @@ def render_leads_table(user):
     st.markdown('<div class="pag-info">', unsafe_allow_html=True)
     pc1, pc2, pc3 = st.columns([1,2,1])
     with pc1:
-        if page > 1 and st.button("← Prev", type="secondary", use_container_width=True):
+        if page > 1 and st.button("Prev", type="secondary", use_container_width=True):
             st.session_state["inv_page"] = page - 1
             st.rerun()
     with pc2:
         st.markdown(f'<div style="text-align:center;font-size:12px;color:var(--text-3);padding-top:10px">Page {page} of {total_pages} · {total:,} leads</div>', unsafe_allow_html=True)
     with pc3:
-        if page < total_pages and st.button("Next →", type="secondary", use_container_width=True):
+        if page < total_pages and st.button("Next", type="secondary", use_container_width=True):
             st.session_state["inv_page"] = page + 1
             st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
@@ -660,7 +660,7 @@ def render_upload_tab(user):
 
     # ── Column detection & email validation (inline) ─────────────────────────
     def detect_columns(df):
-        """Auto-detect field→column mapping from CSV headers."""
+        """Auto-detect fieldcolumn mapping from CSV headers."""
         import re
         mapping = {}
         col_lower = {c: c.lower().strip().replace(" ","_") for c in df.columns}
@@ -860,7 +860,7 @@ def render_upload_tab(user):
         <div class="tip" style="background:var(--surface-2);border:1px solid var(--accent-border);
           border-left:3px solid var(--accent);border-radius:6px;padding:14px 18px;
           font-size:12px;color:#8a7040;margin-top:16px">
-          <b>💡 Accepted column names (any format):</b><br><br>
+          <b>Accepted column names (any format):</b><br><br>
           <b>Name:</b> Full Name, Name, Contact, Contact Name<br>
           <b>Company:</b> Company, Organisation, Employer, Account<br>
           <b>Email:</b> Email, Email Address, Work Email<br>
@@ -918,7 +918,7 @@ def render_upload_tab(user):
               <span style="color:var(--text-3);font-weight:600;text-transform:uppercase;
                 letter-spacing:.8px;font-size:10px">{label}</span>
               <span style="color:var(--text-1);font-weight:500">
-                <span style="color:var(--success)">✓</span> {detected}
+                <span style="color:var(--success)"></span> {detected}
               </span>
             </div>'''
         else:
@@ -932,8 +932,8 @@ def render_upload_tab(user):
 
     col_a, col_b, col_c = st.columns(3)
     col_a.metric("Total Rows", f"{total_rows:,}")
-    col_b.metric("✅ Email Found", f"{int(email_count):,}")
-    col_c.metric("❌ No Email", f"{int(no_email_count):,}")
+    col_b.metric("Email Found", f"{int(email_count):,}")
+    col_c.metric("No Email", f"{int(no_email_count):,}")
 
     st.markdown(f'''
     <div class="tbl" style="margin-bottom:20px">
@@ -948,13 +948,13 @@ def render_upload_tab(user):
     # ── Validate before processing ────────────────────────────────────────────
     can_process = True
     if "full_name" not in col_map and "_combine_name" not in col_map:
-        st.error("❌ Cannot find a name column. Check your CSV has a 'Full Name' or 'Name' column.")
+        st.error("Cannot find a name column. Check your CSV has a 'Full Name' or 'Name' column.")
         can_process = False
     if not campaign_name.strip():
-        st.warning("⚠ Please enter a campaign name above.")
+        st.warning("Please enter a campaign name above.")
         can_process = False
     if not client:
-        st.warning("⚠ Please select a client.")
+        st.warning("Please select a client.")
         can_process = False
 
     if not can_process:
@@ -962,7 +962,7 @@ def render_upload_tab(user):
 
     # ── Process button ────────────────────────────────────────────────────────
     st.markdown('<div style="height:8px"></div>', unsafe_allow_html=True)
-    if st.button("⬆ Process & Import", type="primary", use_container_width=False):
+    if st.button("Process & Import", type="primary", use_container_width=False):
 
         with st.spinner("Processing CSV — cross-checking against inventory..."):
             try:
@@ -993,7 +993,7 @@ def render_upload_tab(user):
         <div style="background:var(--success-bg);border:1px solid var(--success-border);border-radius:10px;
           padding:20px 24px;margin:16px 0">
           <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
-            color:var(--text-1);margin-bottom:12px">✅ Import Complete</div>
+            color:var(--text-1);margin-bottom:12px">Import Complete</div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
             <div>
               <div style="font-family:'Playfair Display',serif;font-size:22px;
@@ -1030,7 +1030,7 @@ def render_upload_tab(user):
 
         # ── Email found list ──────────────────────────────────────────────────
         if result["email_found"]:
-            st.markdown('<div class="sec-hd">✅ Email Found</div>', unsafe_allow_html=True)
+            st.markdown('<div class="sec-hd">Email Found</div>', unsafe_allow_html=True)
             rows_html = ""
             for l in result["email_found"]:
                 tag = '<span style="font-size:10px;color:var(--success)">NEW</span>' if not l["was_existing"] else ""
@@ -1051,7 +1051,7 @@ def render_upload_tab(user):
             import pandas as pd
             df_out = pd.DataFrame(result["email_found"])
             st.download_button(
-                "⬇ Download Email Found CSV",
+                "Download Email Found CSV",
                 df_out.to_csv(index=False).encode(),
                 f"{campaign_name.replace(' ','_')}_email_found.csv",
                 "text/csv"
@@ -1059,7 +1059,7 @@ def render_upload_tab(user):
 
         # ── No email found list ───────────────────────────────────────────────
         if result["no_email_found"]:
-            st.markdown('<div class="sec-hd" style="margin-top:24px">❌ No Email Found</div>', unsafe_allow_html=True)
+            st.markdown('<div class="sec-hd" style="margin-top:24px">No Email Found</div>', unsafe_allow_html=True)
             rows_html = ""
             for l in result["no_email_found"]:
                 rows_html += f"""<tr>
@@ -1077,7 +1077,7 @@ def render_upload_tab(user):
 
             df_out2 = pd.DataFrame(result["no_email_found"])
             st.download_button(
-                "⬇ Download No Email CSV",
+                "Download No Email CSV",
                 df_out2.to_csv(index=False).encode(),
                 f"{campaign_name.replace(' ','_')}_no_email.csv",
                 "text/csv",
@@ -1193,13 +1193,13 @@ def render_clean_filter_tab(user: dict):
     # ── Mode selector ─────────────────────────────────────────────────────────
     mode = st.radio(
         "What are you cleaning?",
-        ["👤  People / Event Leads", "🏢  Clutch Company Leads"],
+        ["People / Event Leads", "Clutch Company Leads"],
         horizontal=True,
     )
 
     st.markdown("---")
 
-    if "👤" in mode:
+    if "" in mode:
         _render_people_cleaner(org_id)
     else:
         _render_clutch_filter(org_id)
@@ -1329,7 +1329,7 @@ def _render_people_cleaner(org_id: int):
     st.markdown(f"**{len(df):,} leads loaded{session_note}**")
 
     # ── Cleaning options ──────────────────────────────────────────────────────
-    st.markdown('<div class="sec-hd" style="margin-top:16px">🧹 Cleaning Options</div>',
+    st.markdown('<div class="sec-hd" style="margin-top:16px">Cleaning Options</div>',
                 unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
@@ -1351,7 +1351,7 @@ def _render_people_cleaner(org_id: int):
                                        type="password")
 
     # ── Title filter ──────────────────────────────────────────────────────────
-    st.markdown('<div class="sec-hd" style="margin-top:20px">🎯 Title / Seniority Filter</div>',
+    st.markdown('<div class="sec-hd" style="margin-top:20px">Title / Seniority Filter</div>',
                 unsafe_allow_html=True)
 
     # Show most common titles for reference
@@ -1467,7 +1467,7 @@ def _render_people_cleaner(org_id: int):
         import pandas as pd2
         csv_bytes = result_df[show_cols].to_csv(index=False).encode()
         st.download_button(
-            f"⬇ Download cleaned CSV ({kept:,} leads)",
+            f"Download cleaned CSV ({kept:,} leads)",
             csv_bytes,
             "cleaned_leads.csv",
             "text/csv"
@@ -1478,7 +1478,7 @@ def _render_people_cleaner(org_id: int):
         st.markdown("**Apply cleaning to inventory database**")
         st.caption("This will update names and company names in your live inventory.")
 
-        if st.button("✅ Apply cleaning to DB", type="primary"):
+        if st.button("Apply cleaning to DB", type="primary"):
             conn2 = get_connection()
             updated = 0
             try:
@@ -1495,7 +1495,7 @@ def _render_people_cleaner(org_id: int):
                         )
                     updated += 1
                 conn2.commit()
-                st.success(f"✅ {updated:,} leads updated in inventory.")
+                st.success(f"{updated:,} leads updated in inventory.")
                 st.session_state["cleaner_preview"] = False
             except Exception as e:
                 st.error(f"Update failed: {e}")
@@ -1565,7 +1565,7 @@ def _render_clutch_filter(org_id: int):
                 ORDER BY l.full_name
             """, (org_id,)).fetchall()
             if rows:
-                st.caption("ℹ️ Showing legacy Clutch leads. Run `python migrate.py` to tag them permanently.")
+                st.caption("Showing legacy Clutch leads. Run `python migrate.py` to tag them permanently.")
 
     except Exception as e:
         st.error(f"Could not load leads: {e}")
@@ -1601,7 +1601,7 @@ def _render_clutch_filter(org_id: int):
     df = pd.DataFrame(records)
     st.markdown(f"**{len(df):,} Clutch company leads loaded**")
 
-    st.markdown('<div class="sec-hd" style="margin-top:16px">🔍 Filter Options</div>',
+    st.markdown('<div class="sec-hd" style="margin-top:16px">Filter Options</div>',
                 unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
@@ -1616,7 +1616,7 @@ def _render_clutch_filter(org_id: int):
         )
 
         # Rating
-        min_rating = st.slider("Minimum rating ★", 0.0, 5.0, 0.0, 0.1)
+        min_rating = st.slider("Minimum rating", 0.0, 5.0, 0.0, 0.1)
 
     with col2:
         # Min budget
@@ -1745,7 +1745,7 @@ def _render_clutch_filter(org_id: int):
         # Export
         csv_bytes = result[show_cols].to_csv(index=False).encode()
         st.download_button(
-            f"⬇ Download filtered list ({kept:,} companies)",
+            f"Download filtered list ({kept:,} companies)",
             csv_bytes,
             "clutch_filtered.csv",
             "text/csv"
@@ -1754,7 +1754,7 @@ def _render_clutch_filter(org_id: int):
         # Archive to list
         st.markdown("---")
         list_name = st.text_input("Save as archived list", placeholder="Clutch Berlin Web Design 4.5+")
-        if list_name.strip() and st.button("📂 Archive this selection", type="primary"):
+        if list_name.strip() and st.button("Archive this selection", type="primary"):
             conn3 = get_connection()
             try:
                 now = __import__("datetime").datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
@@ -1769,7 +1769,7 @@ def _render_clutch_filter(org_id: int):
                         (list_id, lead_id)
                     )
                 conn3.commit()
-                st.success(f"✅ {kept:,} companies archived to '{list_name}'")
+                st.success(f"{kept:,} companies archived to '{list_name}'")
             except Exception as e:
                 st.error(f"Archive failed: {e}")
             finally:
@@ -1793,7 +1793,7 @@ def render(user):
                 format_func=lambda x: f"{x['name']} ({x.get('industry') or 'No industry'})")
             c1, c2 = st.columns(2)
             with c1:
-                if st.button("✓ Archive", type="primary", use_container_width=True):
+                if st.button("Archive", type="primary", use_container_width=True):
                     archive_leads([aid], sel_list['id'])
                     st.success(f"Lead archived to '{sel_list['name']}'")
                     st.rerun()
@@ -1852,11 +1852,11 @@ def render(user):
 
     # Tabs
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "📋  All Leads",
-        "📂  Archived Lists",
-        "⚡  Conflict Checker",
-        "⬆  Upload Enriched CSV",
-        "🧹  Clean & Filter",
+        "All Leads",
+        "Archived Lists",
+        "Conflict Checker",
+        "Upload Enriched CSV",
+        "Clean & Filter",
     ])
 
     with tab1:

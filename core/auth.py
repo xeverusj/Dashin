@@ -238,7 +238,7 @@ def render_login_page(invite_token: str = None):
     }
     </style>
     <div class="login-container">
-        <div class="login-logo">⚡ Dashin</div>
+        <div class="login-logo">Dashin</div>
         <div class="login-sub">Research Operations Platform</div>
     </div>
     """, unsafe_allow_html=True)
@@ -362,6 +362,6 @@ def render_notification_badge(user: dict):
         st.sidebar.markdown(
             f'<span style="background:#E53935;color:white;padding:2px 8px;'
             f'border-radius:12px;font-size:11px;font-weight:700;">'
-            f'🔔 {count} new</span>',
+            f'{count} new</span>',
             unsafe_allow_html=True
         )

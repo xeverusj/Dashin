@@ -1,6 +1,6 @@
 """
 services/site_learning_service.py — Dashin Research Platform
-AI Site Learning Agent: discover → verify → classify → monitor.
+AI Site Learning Agent: discover · verify · classify · monitor.
 
 Four phases for every unknown site:
   Phase 1 — Discover:  Claude Vision identifies selectors
@@ -278,7 +278,7 @@ def record_pattern_attempt(domain: str, success: bool, leads_found: int = 0):
                     last_attempt_at = ?
                 WHERE domain = ?
             """, (now, domain))
-            # Check if fail_count >= 3 → expire
+            # Check if fail_count >= 3 · expire
             row = conn.execute(
                 "SELECT fail_count FROM site_patterns WHERE domain=?", (domain,)
             ).fetchone()

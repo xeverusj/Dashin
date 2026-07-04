@@ -2,7 +2,7 @@
 core/fetch_tiers.py — multi-tier fetch fallback with TLS/JA3 impersonation.
 
 Implements the anti-block fetching strategy specced in the master doc (Module
-A4), mirroring Scrapling's Fetcher → StealthyFetcher → PlayWrightFetcher tiering
+A4), mirroring Scrapling's Fetcher · StealthyFetcher · PlayWrightFetcher tiering
 *in our own code*. Nothing is imported from Scrapling (it is AGPL; importing it
 into a product sold to clients would force the whole app open-source). The one
 technique that genuinely needs a C library — matching a real browser's TLS
@@ -64,7 +64,7 @@ _CHALLENGE_MARKERS = (
     "/cdn-cgi/challenge-platform",
 )
 
-_MIN_BODY = 80   # bodies shorter than this are "thin" → escalate
+_MIN_BODY = 80   # bodies shorter than this are "thin" · escalate
 
 
 def _looks_blocked(status: int, body: str) -> tuple[bool, str]:

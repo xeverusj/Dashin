@@ -94,18 +94,18 @@ def require_active_account(interactive: bool = True) -> dict:
     acct = check(cfg.get("api_url", ""), cfg.get("token", ""))
 
     if acct.get("active"):
-        print(f"✓ Signed in — {acct.get('org_name','your account')} "
+        print(f"Signed in — {acct.get('org_name','your account')} "
               f"(subscription: {acct.get('subscription_status','active')}).")
         return acct
 
     # Not active — give the client one chance to re-enter credentials.
-    print(f"\n✗ Cannot start: {acct.get('reason', 'account not active.')}")
+    print(f"\nCannot start: {acct.get('reason', 'account not active.')}")
     if interactive and acct.get("ok") is False and "token" in (acct.get("reason", "").lower()):
         cfg = login_prompt()
         acct = check(cfg.get("api_url", ""), cfg.get("token", ""))
         if acct.get("active"):
-            print(f"✓ Signed in — {acct.get('org_name','your account')}.")
+            print(f"Signed in — {acct.get('org_name','your account')}.")
             return acct
-        print(f"\n✗ Still cannot start: {acct.get('reason','account not active.')}")
+        print(f"\nStill cannot start: {acct.get('reason','account not active.')}")
 
     raise SystemExit(1)

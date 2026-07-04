@@ -2,12 +2,12 @@
 dashboards/enrichment_dashboard.py — Dashin Research Platform
 
 Account Intelligence Enrichment Pipeline
-Upload a CSV of companies → scrape website pages → Claude classification →
-deterministic fit scoring → hook generation → Instantly-ready CSV export.
+Upload a CSV of companies · scrape website pages · Claude classification
+deterministic fit scoring · hook generation · Instantly-ready CSV export.
 
 Two-pass Claude pipeline (anti-hallucination):
-  Pass 1: Extract structured facts from website text → classification JSON
-  Pass 2: Convert classification JSON → one 20-word account_hook sentence
+  Pass 1: Extract structured facts from website text · classification JSON
+  Pass 2: Convert classification JSON · one 20-word account_hook sentence
 
 Does NOT touch any existing scraper or lead tables.
 """
@@ -214,7 +214,7 @@ def _generate_hook(
     user_id: int,
 ) -> str:
     """
-    Pass 2: Convert classification JSON → one 20-word account_hook sentence.
+    Pass 2: Convert classification JSON · one 20-word account_hook sentence.
     Logs usage via ai_tracker. Returns empty string on failure.
     """
     from core.ai_tracker import log_usage
@@ -367,13 +367,13 @@ def render(user: dict):
     user_id = user.get("id")
 
     if role not in ALLOWED_ROLES:
-        st.error("🚫 You don't have permission to access this page.")
+        st.error("You don't have permission to access this page.")
         return
 
     st.markdown("## Account Intelligence Enrichment")
     st.markdown(
-        "Upload a company list → scrape websites → AI classification → "
-        "fit scoring → hook generation → download Instantly-ready CSV."
+        "Upload a company list · scrape websites · AI classification · "
+        "fit scoring · hook generation · download Instantly-ready CSV."
     )
 
     # ── AI budget check ────────────────────────────────────────────────────

@@ -131,9 +131,9 @@ def parse_results(html: str, engine: str) -> list:
     """
     Parse a rendered results page into LinkedIn /in/ results:
     [{linkedin_url, title, snippet}] in result order. Selectors verified live:
-      DuckDuckGo → article[data-testid=result], a[data-testid=result-title-a],
+      DuckDuckGo · article[data-testid=result], a[data-testid=result-title-a],
                    [data-result=snippet]
-      Bing       → li.b_algo, h2 a, .b_caption
+      Bing       · li.b_algo, h2 a, .b_caption
     """
     results = []
     if not html:
@@ -169,7 +169,7 @@ def parse_results(html: str, engine: str) -> list:
 
 
 def parse_profile_title(title: str) -> dict:
-    """"Name - Title - Company | LinkedIn" (or "... at Company") → parts."""
+    """"Name - Title - Company | LinkedIn" (or "... at Company") · parts."""
     out = {"name": "", "title": "", "company": ""}
     if not title:
         return out

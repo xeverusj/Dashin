@@ -1,7 +1,7 @@
 """
 services/invite_service.py — Dashin Research Platform
 Client self-serve signup via invite tokens.
-Admin generates a link → client clicks it → sets email + password → gets access.
+Admin generates a link · client clicks it · sets email + password · gets access.
 """
 
 import secrets

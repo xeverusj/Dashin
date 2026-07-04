@@ -5,7 +5,7 @@ Campaign Manager workspace.
 - Update lead statuses + notes
 - Download enriched contacts CSV
 - View + copy outreach templates
-- Enter weekly stats → auto-generate report
+- Enter weekly stats · auto-generate report
 - Download XLSX report
 """
 
@@ -104,11 +104,11 @@ def render(user: dict):
     st.markdown("---")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "📋 CRM View",
-        "✏️ Update Status",
-        "📧 Templates",
-        "📊 Weekly Report",
-        "⬇️ Download",
+        "CRM View",
+        "Update Status",
+        "Templates",
+        "Weekly Report",
+        "Download",
     ])
 
     with tab1:
@@ -166,7 +166,7 @@ def _render_crm_view(crm: list, campaign_id: int):
         email  = r.get("email") or "—"
         email_str = f'<a href="mailto:{email}">{email}</a>' if "@" in email else email
         meeting = r.get("meeting_date") or ""
-        meeting_str = f"📅 {meeting[:10]}" if meeting else ""
+        meeting_str = f"{meeting[:10]}" if meeting else ""
         notes   = (r.get("notes") or "")[:60]
         notes_str = f'{notes}{"…" if len(r.get("notes","")) > 60 else ""}'
 
@@ -312,9 +312,9 @@ def _render_templates(campaign_id: int, org_id: int, user_id: int):
         st.caption(f"{len(templates)} template(s)")
         for t in templates:
             approval_color = {
-                "approved": "🟢", "pending": "🟡",
-                "rejected": "🔴", "changes_requested": "🟠"
-            }.get(t["approval_status"], "⚪")
+                "approved": "", "pending": "",
+                "rejected": "", "changes_requested": ""
+            }.get(t["approval_status"], "")
 
             with st.expander(
                 f"Step {t['sequence_step']} — v{t['version']} "
@@ -329,7 +329,7 @@ def _render_templates(campaign_id: int, org_id: int, user_id: int):
                     st.info(f"Client notes: {t['client_notes']}")
 
                 # Copy button hint
-                st.caption("📋 Select all text above and copy to your email tool.")
+                st.caption("Select all text above and copy to your email tool.")
     else:
         st.info("No templates uploaded for this campaign yet.")
 
@@ -470,7 +470,7 @@ def _render_downloads(campaign_id: int, campaign_name: str,
         col1, col2 = st.columns(2)
         with col1:
             st.download_button(
-                "⬇ All Contacts CSV",
+                "All Contacts CSV",
                 data=df.to_csv(index=False),
                 file_name=f"{campaign_name}_all_contacts.csv",
                 mime="text/csv",
@@ -478,7 +478,7 @@ def _render_downloads(campaign_id: int, campaign_name: str,
             )
         with col2:
             st.download_button(
-                "⬇ Email-Found Only CSV",
+                "Email-Found Only CSV",
                 data=email_df.to_csv(index=False),
                 file_name=f"{campaign_name}_email_contacts.csv",
                 mime="text/csv",
@@ -494,7 +494,7 @@ def _render_downloads(campaign_id: int, campaign_name: str,
     xlsx_bytes = generate_xlsx(campaign_id, campaign_name, client_name)
     if xlsx_bytes:
         st.download_button(
-            "⬇ Download Weekly Report (.xlsx)",
+            "Download Weekly Report (.xlsx)",
             data=xlsx_bytes,
             file_name=f"{campaign_name}_report_{date.today().isoformat()}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

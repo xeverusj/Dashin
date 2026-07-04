@@ -110,12 +110,12 @@ def can_use_ai(org_id: int) -> tuple:
     usage = get_org_usage(org_id)
     if usage["budget_usd"] > 0 and usage["pct_used"] >= 100:
         return False, (
-            f"🚫 AI budget exceeded ({usage['pct_used']}% used, "
+            f"AI budget exceeded ({usage['pct_used']}% used, "
             f"${usage['cost_usd']:.2f}/${usage['budget_usd']:.2f}). "
             "Contact Dashin to upgrade your plan."
         )
     if usage["pct_used"] >= 80:
-        return True, f"⚠ AI budget at {usage['pct_used']}% — approaching limit."
+        return True, f"AI budget at {usage['pct_used']}% — approaching limit."
     return True, ""
 
 
@@ -209,7 +209,7 @@ This is an automated alert from Dashin Research Platform.
 
     if not SMTP_HOST or not SMTP_USER:
         # No email configured — print to console
-        print(f"\n⚠  AI BUDGET ALERT: {org_name} is at {pct:.0f}% (${cost:.4f}/${budget:.2f})\n")
+        print(f"\nAI BUDGET ALERT: {org_name} is at {pct:.0f}% (${cost:.4f}/${budget:.2f})\n")
         return
 
     try:
@@ -219,7 +219,7 @@ This is an automated alert from Dashin Research Platform.
             msg = f"Subject: {subject}\n\n{body}"
             server.sendmail(SMTP_USER, SUPER_ADMIN_EMAIL, msg)
     except Exception as e:
-        print(f"⚠ Could not send AI alert email: {e}")
+        print(f"Could not send AI alert email: {e}")
 
 
 # ── SUPER ADMIN QUERIES ───────────────────────────────────────────────────────

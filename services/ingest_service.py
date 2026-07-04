@@ -8,7 +8,7 @@ into the org's inventory, deduplicating via lead_service.save_lead.
 
 Company-only scrapes (e.g. the microbiome company lists) have no person — we use
 the company name as the lead so the account still appears in inventory and can be
-researched for contacts later. Extra fields (website→company.domain, industry,
+researched for contacts later. Extra fields (websitecompany.domain, industry,
 country, email, linkedin) are upserted onto companies/enrichment.
 """
 
@@ -99,7 +99,7 @@ def ingest_rows(org_id: int, rows: list, source: str = "scraper") -> dict:
         email = _pick(row, "email")
         linkedin = _pick(row, "linkedin_url", "linkedin")
 
-        # No person → use the company as the account-level "lead" so it's visible.
+        # No person · use the company as the account-level "lead" so it's visible.
         full_name = person or company
         if not full_name:
             summary["skipped"] += 1

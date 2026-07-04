@@ -97,9 +97,9 @@ def render(user: dict):
 
     # ── Tabs ──────────────────────────────────────────────────────────
     tab1, tab2, tab3 = st.tabs([
-        "📋 My Tasks",
-        "✏️ Enrich a Lead",
-        "📊 My Stats",
+        "My Tasks",
+        "Enrich a Lead",
+        "My Stats",
     ])
 
     with tab1:
@@ -187,11 +187,11 @@ def _render_task_card(task: dict, user: dict, org_id: int, user_id: int):
             <div>
                 <div class="task-title">{task['title']}</div>
                 <div class="task-meta">
-                    <span>📂 {task['task_type'].replace('_',' ').title()}</span>
-                    <span class="{deadline_class}">📅 {deadline_str or 'No deadline'}</span>
-                    <span>🎯 {completed}/{target} leads</span>
+                    <span>{task['task_type'].replace('_',' ').title()}</span>
+                    <span class="{deadline_class}">{deadline_str or 'No deadline'}</span>
+                    <span>{completed}/{target} leads</span>
                 </div>
-                {f'<div style="margin-top:6px;font-size:12px;color:var(--error);">↩ Revision needed: {rejection_note}</div>' if rejection_note and status != 'approved' else ''}
+                {f'<div style="margin-top:6px;font-size:12px;color:var(--error);">Revision needed: {rejection_note}</div>' if rejection_note and status != 'approved' else ''}
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;">
                 <span class="priority-badge priority-{priority}">{priority}</span>
@@ -218,7 +218,7 @@ def _render_task_card(task: dict, user: dict, org_id: int, user_id: int):
 
     with col2:
         if status == "in_progress":
-            if st.button("📤 Submit", key=f"submit_{task['id']}",
+            if st.button("Submit", key=f"submit_{task['id']}",
                          use_container_width=True):
                 submit_task(task["id"], user_id)
                 st.success("Submitted for review!")
@@ -226,7 +226,7 @@ def _render_task_card(task: dict, user: dict, org_id: int, user_id: int):
 
     with col3:
         if status in ("pending", "in_progress"):
-            if st.button("↩ Reassign", key=f"reassign_{task['id']}",
+            if st.button("Reassign", key=f"reassign_{task['id']}",
                          use_container_width=True):
                 st.session_state[f"reassign_open_{task['id']}"] = True
 
@@ -328,7 +328,7 @@ def _render_enrichment_form(user: dict, org_id: int, user_id: int):
     if flags:
         flag_html = " ".join([
             f'<span class="flag-chip {"flag-warning" if f["severity"]=="warning" else ""}">'
-            f'⚑ {f["flag_type"].replace("_"," ")}</span>'
+            f'{f["flag_type"].replace("_"," ")}</span>'
             for f in flags
         ])
         st.markdown(f"**Flags:** {flag_html}", unsafe_allow_html=True)

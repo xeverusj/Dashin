@@ -5,7 +5,7 @@ Upload an email list (from any external finder/verifier) and attach each address
 to the right lead already in inventory. Matching runs in priority order:
 
   1. exact    — the row carries a name (+ optional company) that matches a lead.
-  2. inferred — no name, but the email local part implies one (john.doe@… →
+  2. inferred — no name, but the email local part implies one (john.doe@…
                 "john doe") that matches a lead.
   3. domain   — only the domain is known; if exactly one lead sits at that
                 company/domain, auto-match it; if several, send it to review with
@@ -48,8 +48,8 @@ def domain_of(email: str) -> str:
 def infer_name_from_local(local: str) -> str:
     """
     Turn an email local part into a probable name:
-      "john.doe" → "john doe", "jsmith" → "jsmith" (unsplittable, left as-is),
-      "john_doe99" → "john doe". Digits and plus-tags are stripped.
+      "john.doe" · "john doe", "jsmith" · "jsmith" (unsplittable, left as-is),
+      "john_doe99" · "john doe". Digits and plus-tags are stripped.
     """
     if not local:
         return ""

@@ -122,7 +122,7 @@ def render(user: dict):
                     placeholder="https://yourcompany.com"
                 )
 
-                if st.form_submit_button("Next →", use_container_width=True, type="primary"):
+                if st.form_submit_button("Next", use_container_width=True, type="primary"):
                     # Save org name update if changed
                     if org_name.strip() and org_name.strip() != org.get("name", ""):
                         conn2 = get_connection()
@@ -171,7 +171,7 @@ def render(user: dict):
                             help="So we can link your accounts"
                         )
 
-                    if st.form_submit_button("Next →", use_container_width=True, type="primary"):
+                    if st.form_submit_button("Next", use_container_width=True, type="primary"):
                         st.session_state["onboarding_step"] = 3
                         st.rerun()
 
@@ -200,7 +200,7 @@ def render(user: dict):
                          "All of the above"]
                     )
 
-                    if st.form_submit_button("Next →", use_container_width=True, type="primary"):
+                    if st.form_submit_button("Next", use_container_width=True, type="primary"):
                         st.session_state["onboarding_step"] = 3
                         st.rerun()
 
@@ -216,41 +216,41 @@ def render(user: dict):
                 unsafe_allow_html=True
             )
             st.markdown(
-                '<div class="ob-title">🎉 Account Ready</div>',
+                '<div class="ob-title">Account Ready</div>',
                 unsafe_allow_html=True
             )
 
             if org_type == "agency":
                 next_steps = [
-                    ("🏢 Add your clients",
-                     "Go to Admin → Clients to add your first client."),
-                    ("👥 Invite your team",
-                     "Go to Admin → Users to add researchers and managers."),
-                    ("🔍 Start scraping",
+                    ("Add your clients",
+                     "Go to Admin · Clients to add your first client."),
+                    ("Invite your team",
+                     "Go to Admin · Users to add researchers and managers."),
+                    ("Start scraping",
                      "Use the Smart Scraper to pull attendees from events."),
                 ]
             elif org_type == "freelance":
                 next_steps = [
-                    ("👥 Add your team",
-                     "Go to Admin → Users to add researchers."),
-                    ("🔍 Start scraping",
+                    ("Add your team",
+                     "Go to Admin · Users to add researchers."),
+                    ("Start scraping",
                      "Use the Smart Scraper to pull attendees from events."),
-                    ("📦 Browse inventory",
+                    ("Browse inventory",
                      "Your scraped leads will appear in the Inventory."),
                 ]
             elif org_type == "client":
                 next_steps = [
-                    ("📦 Your Inventory",
+                    ("Your Inventory",
                      "Leads your agency enriches for you will appear here."),
-                    ("📁 Campaigns",
+                    ("Campaigns",
                      "Review and approve campaigns your agency builds."),
-                    ("💬 Leave notes",
+                    ("Leave notes",
                      "Add notes and feedback on leads and campaigns."),
                 ]
             else:
                 next_steps = [
-                    ("⚡ Platform", "Manage all organisations from the Platform tab."),
-                    ("🏢 Orgs", "Create and manage agency accounts."),
+                    ("Platform", "Manage all organisations from the Platform tab."),
+                    ("Orgs", "Create and manage agency accounts."),
                 ]
 
             for title, desc in next_steps:
@@ -263,7 +263,7 @@ def render(user: dict):
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            if st.button("Go to Dashboard →", use_container_width=True, type="primary"):
+            if st.button("Go to Dashboard", use_container_width=True, type="primary"):
                 # Mark onboarding complete
                 conn = get_connection()
                 conn.execute(

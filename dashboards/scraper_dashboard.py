@@ -168,7 +168,7 @@ def _render_learning_result_card(log_content: str):
         return
     # Parse key signals from the log
     is_new_site  = "Saved layout pattern for" in log_content
-    used_cache   = "Using cached pattern" in log_content or "✓ Pattern" in log_content
+    used_cache   = "Using cached pattern" in log_content or "Pattern" in log_content
     quality_fail = "Quality check failed" in log_content or "quality" in log_content.lower() and "fail" in log_content.lower()
     domain_match = None
 
@@ -183,7 +183,7 @@ def _render_learning_result_card(log_content: str):
 
     if quality_fail:
         st.markdown(
-            "⚠️ **Quality check failed** — leads found had insufficient title/company data. "
+            "**Quality check failed** — leads found had insufficient title/company data. "
             "Pattern NOT cached. Try navigating to the attendee list page directly.",
             unsafe_allow_html=False,
         )
@@ -193,9 +193,9 @@ def _render_learning_result_card(log_content: str):
         st.markdown(
             f'<div style="background:{colour};border-radius:8px;padding:14px 18px;'
             f'font-size:13px;margin:12px 0">'
-            f'🧠 <strong>New site learned: {domain_match}</strong><br>'
+            f'<strong>New site learned: {domain_match}</strong><br>'
             f'Selector type: <strong>{selector_type}</strong><br>'
-            f'Added to site library ✓'
+            f'Added to site library'
             f'</div>',
             unsafe_allow_html=True,
         )
@@ -203,7 +203,7 @@ def _render_learning_result_card(log_content: str):
         st.markdown(
             f'<div style="background:var(--surface-2);border-radius:8px;padding:14px 18px;'
             f'font-size:13px;margin:12px 0">'
-            f'✓ Used <strong>cached pattern</strong> for {domain_match}'
+            f'Used <strong>cached pattern</strong> for {domain_match}'
             f'</div>',
             unsafe_allow_html=True,
         )
@@ -217,7 +217,7 @@ def _render_learning_result_card(log_content: str):
             st.markdown(
                 f'<div style="background:var(--surface-2);border-radius:8px;padding:14px 18px;'
                 f'font-size:13px;margin:8px 0">'
-                f'⚠️ Cached pattern(s) expiring soon (fragile selectors): {domains}'
+                f'Cached pattern(s) expiring soon (fragile selectors): {domains}'
                 f'</div>',
                 unsafe_allow_html=True,
             )
@@ -254,7 +254,7 @@ def render(user: dict = None):
         _playwright_ok = False
 
     if not _playwright_ok:
-        st.info("### 🖥️ Scraper runs on your local machine")
+        st.info("###Scraper runs on your local machine")
         st.markdown("""
         The scraper opens a real browser so you can log in to Brella, BETT,
         and other event platforms. It cannot run in the cloud.
@@ -288,11 +288,11 @@ def render(user: dict = None):
     if failed_saves:
         total_leads = sum(s.get("batch_count", 0) for s in failed_saves)
         st.error(
-            f"⚠️ **{total_leads} leads are in CSV only** — {len(failed_saves)} scrape session(s) "
+            f"**{total_leads} leads are in CSV only** — {len(failed_saves)} scrape session(s) "
             f"failed to write to the database. Use **Sync CSV to DB** below to recover them."
         )
         if is_admin:
-            if st.button("🔄 Sync CSV to DB", type="secondary"):
+            if st.button("Sync CSV to DB", type="secondary"):
                 _sync_csv_to_db(org_id)
                 _clear_failed_saves()
                 st.success("Sync complete. Reload to see updated counts.")
@@ -336,13 +336,13 @@ def render(user: dict = None):
     # Handle finished scrapes
     for s in just_finished:
         log_content = _read_log(s["log"]) if s.get("log") else ""
-        exit_code = 0 if "✅" in log_content or "Done" in log_content else 1
+        exit_code = 0 if "" in log_content or "Done" in log_content else 1
         if s.get("session_id"):
             _mark_session_done(s["session_id"], exit_code)
         if exit_code == 0:
-            st.success(f"✅ Scrape finished: {s.get('url', '')}")
+            st.success(f"Scrape finished: {s.get('url', '')}")
         else:
-            st.warning(f"⚠️ Scrape ended with errors: {s.get('url', '')}")
+            st.warning(f"Scrape ended with errors: {s.get('url', '')}")
         with st.expander("View output"):
             st.code(log_content or "(no output)", language="bash")
         _render_learning_result_card(log_content)
@@ -351,7 +351,7 @@ def render(user: dict = None):
 
     if still_running:
         st.markdown(
-            f'<div class="sec-header">🔄 {len(still_running)} Scrape(s) Running</div>',
+            f'<div class="sec-header">{len(still_running)} Scrape(s) Running</div>',
             unsafe_allow_html=True,
         )
         for idx, s in enumerate(still_running):
@@ -359,7 +359,7 @@ def render(user: dict = None):
             if s.get("start"):
                 secs = int(time.time() - s["start"])
                 elapsed = f"  ·  {secs // 60}m {secs % 60}s"
-            with st.expander(f"🔄 {s.get('url', 'Scrape')} {elapsed}", expanded=True):
+            with st.expander(f"{s.get('url', 'Scrape')} {elapsed}", expanded=True):
                 col_stop, col_refresh, _ = st.columns([1, 1, 5])
                 with col_stop:
                     if st.button("⏹ Stop", key=f"stop_{idx}", type="secondary"):
@@ -377,7 +377,7 @@ def render(user: dict = None):
                         ]
                         st.rerun()
                 with col_refresh:
-                    if st.button("↻ Refresh", key=f"refresh_{idx}", type="secondary"):
+                    if st.button("Refresh", key=f"refresh_{idx}", type="secondary"):
                         st.rerun()
                 log_content = _read_log(s["log"]) if s.get("log") else ""
                 st.markdown(
@@ -392,17 +392,17 @@ def render(user: dict = None):
     st.markdown('<div class="sec-header">Launch New Scrape</div>', unsafe_allow_html=True)
 
     SCRAPER_TYPES = {
-        "🎪  Event Directory": {
+        "Event Directory": {
             "key": "event", "script": "worker.py",
             "placeholder": "https://app.bettshow.com/newfront/participants",
             "tip": "Scrapes attendee/delegate lists from event apps. Works on Brella, BETT, FDF, Swapcard, and most event platforms.",
         },
-        "🏢  Clutch": {
+        "Clutch": {
             "key": "clutch", "script": "clutch_scraper.py",
             "placeholder": "https://clutch.co/uk/agencies/seo",
             "tip": "Scrapes agency/company listings from Clutch.co.",
         },
-        "📋  Generic List": {
+        "Generic List": {
             "key": "generic", "script": "worker.py",
             "placeholder": "https://any-directory-or-listing.com",
             "tip": "AI vision fallback for any other listing page.",
@@ -435,7 +435,7 @@ def render(user: dict = None):
         is_coming_soon = scraper["script"] is None
 
         st.markdown(
-            f'<div class="tip">💡 {scraper["tip"]}'
+            f'<div class="tip">{scraper["tip"]}'
             f'{"<br><b>Coming soon — not yet available.</b>" if is_coming_soon else ""}</div>',
             unsafe_allow_html=True,
         )
@@ -472,8 +472,8 @@ def render(user: dict = None):
                 mobile_mode = False
             else:
                 max_pages = 20
-                mobile_mode = st.checkbox("📱 Mobile emulation mode")
-                with st.expander("🖥️ Advanced: attach to an emulator / device (app-only events)"):
+                mobile_mode = st.checkbox("Mobile emulation mode")
+                with st.expander("Advanced: attach to an emulator / device (app-only events)"):
                     st.caption(
                         "For events that exist **only** as a native app. Run the app in an "
                         "Android emulator (or device) with Chrome remote debugging enabled, "
@@ -486,7 +486,7 @@ def render(user: dict = None):
 
             c1, c2 = st.columns([1, 4])
             with c1:
-                go = st.button("🚀 Launch", type="primary", use_container_width=True)
+                go = st.button("Launch", type="primary", use_container_width=True)
             with c2:
                 st.markdown(
                     '<p style="font-size:12px;color:var(--text-3);padding-top:12px">'
@@ -590,7 +590,7 @@ def render(user: dict = None):
                 })
 
                 st.success(
-                    f"✅ Scrape launched (PID {proc.pid}). "
+                    f"Scrape launched (PID {proc.pid}). "
                     "A browser window should open — login, set filters, then click the purple START button."
                 )
                 st.rerun()
@@ -600,7 +600,7 @@ def render(user: dict = None):
 
     col_r, _ = st.columns([1, 6])
     with col_r:
-        if st.button("↻ Refresh", type="secondary"):
+        if st.button("Refresh", type="secondary"):
             st.rerun()
 
     sessions = _get_recent_sessions(org_id, 15)
@@ -614,7 +614,7 @@ def render(user: dict = None):
             cat = sess.get("category") or "—"
             dt  = (sess.get("started_at") or "")[:16].replace("T", " ")
             ai  = sess.get("ai_cost_usd") or 0
-            pat = "✓ Pattern" if sess.get("pattern_used") else "AI"
+            pat = "Pattern" if sess.get("pattern_used") else "AI"
             rows_html += f"""<tr>
               <td class="n">{evt}</td><td>{cat}</td>
               <td>{sess.get('leads_found', 0)}</td>
@@ -649,7 +649,7 @@ def render(user: dict = None):
                 try:
                     df = pd.read_csv(sel)
                     st.download_button(
-                        f"⬇ Download {sel.name} ({len(df)} rows)",
+                        f"Download {sel.name} ({len(df)} rows)",
                         df.to_csv(index=False).encode(),
                         sel.name, "text/csv",
                     )

@@ -74,12 +74,12 @@ def render(user: dict):
     st.markdown("---")
 
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-        "✅ Review Tasks",
-        "📊 Team KPIs",
-        "⚑ Flags",
-        "🎯 Quotas",
-        "➕ Assign Task",
-        "🔬 Quality Report",
+        "Review Tasks",
+        "Team KPIs",
+        "Flags",
+        "Quotas",
+        "Assign Task",
+        "Quality Report",
     ])
 
     with tab1:
@@ -123,7 +123,7 @@ def _render_task_review(org_id: int, user_id: int, submitted_tasks: list):
 
         col1, col2 = st.columns([1, 2])
         with col1:
-            if st.button("✅ Approve", key=f"approve_{task['id']}",
+            if st.button("Approve", key=f"approve_{task['id']}",
                          use_container_width=True):
                 approve_task(task["id"], user_id)
                 st.success("Task approved!")
@@ -132,7 +132,7 @@ def _render_task_review(org_id: int, user_id: int, submitted_tasks: list):
             with st.form(f"reject_task_{task['id']}"):
                 note = st.text_input("Rejection note (required)",
                                      key=f"rnote_{task['id']}")
-                if st.form_submit_button("↩ Send Back for Revision",
+                if st.form_submit_button("Send Back for Revision",
                                          use_container_width=True):
                     if not note.strip():
                         st.error("Please provide a reason.")
@@ -203,17 +203,17 @@ def _render_team_kpis(org_id: int, week_start: str):
     issues = []
     for k in kpis:
         if k["personal_email_rate"] >= 15:
-            issues.append(f"⚠ {k['researcher_name']}: "
+            issues.append(f"{k['researcher_name']}: "
                           f"{k['personal_email_rate']}% personal email rate")
         if k["rejection_rate"] >= 30:
-            issues.append(f"⚠ {k['researcher_name']}: "
+            issues.append(f"{k['researcher_name']}: "
                           f"{k['rejection_rate']}% rejection rate")
         if k["quota_pct"] is not None and k["quota_pct"] < 50:
-            issues.append(f"⚠ {k['researcher_name']}: "
+            issues.append(f"{k['researcher_name']}: "
                           f"only {k['quota_pct']:.0f}% of quota reached")
 
     if issues:
-        with st.expander(f"⚠ {len(issues)} issue(s) need attention"):
+        with st.expander(f"{len(issues)} issue(s) need attention"):
             for issue in issues:
                 st.warning(issue)
 
@@ -244,7 +244,7 @@ def _render_flags(org_id: int, user_id: int):
     for flag in flags:
         severity  = flag.get("severity", "warning")
         card_cls  = "flag-card" + (" warning" if severity == "warning" else "")
-        icon      = "🔴" if severity == "critical" else "🟡"
+        icon      = "" if severity == "critical" else ""
 
         st.markdown(f"""
         <div class="{card_cls}">
@@ -261,13 +261,13 @@ def _render_flags(org_id: int, user_id: int):
 
         col1, col2, col3 = st.columns([1, 1, 3])
         with col1:
-            if st.button("✅ Dismiss", key=f"dismiss_flag_{flag['id']}",
+            if st.button("Dismiss", key=f"dismiss_flag_{flag['id']}",
                          use_container_width=True):
                 resolve_flag(flag["id"], user_id,
                              "Reviewed and dismissed", learn=True)
                 st.rerun()
         with col2:
-            if st.button("✏ Confirm", key=f"confirm_flag_{flag['id']}",
+            if st.button("Confirm", key=f"confirm_flag_{flag['id']}",
                          use_container_width=True):
                 resolve_flag(flag["id"], user_id,
                              "Confirmed as invalid", learn=False)

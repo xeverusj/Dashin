@@ -14,13 +14,13 @@ def get_visible_org_ids(user: dict) -> list:
     """
     Returns list of org_ids this user can see data for.
 
-    dashin super_admin / org_admin  → all org ids
-    agency org_admin / manager      → their org + all child client orgs
-    agency researcher/research_mgr  → their org only
-    agency campaign_manager         → their org + client orgs with active campaigns
-    freelance org_admin             → their org + assigned client orgs
-    freelance researcher            → their org only
-    client_admin / client_user      → their org only
+    dashin super_admin / org_admin  · all org ids
+    agency org_admin / manager      · their org + all child client orgs
+    agency researcher/research_mgr  · their org only
+    agency campaign_manager         · their org + client orgs with active campaigns
+    freelance org_admin             · their org + assigned client orgs
+    freelance researcher            · their org only
+    client_admin / client_user      · their org only
     """
     role     = user.get('role')
     org_id   = user.get('org_id')

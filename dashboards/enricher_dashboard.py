@@ -4,8 +4,8 @@ dashboards/enricher_dashboard.py — LinkedIn Enricher UI (Module C).
 Finds LinkedIn profiles via web search in a visible browser — no LinkedIn login.
 Two modes, auto-detected from the uploaded CSV:
 
-  C1 (contact)  rows have a name  → find that person's profile.
-  C2 (roles)    company-only rows → the user picks which titles to try, then it
+  C1 (contact)  rows have a name  · find that person's profile.
+  C2 (roles)    company-only rows · the user picks which titles to try, then it
                 searches "<company> current <title> linkedin" over up to 3 rounds.
 
 The search runs in a separate visible browser window (launched as a subprocess,
@@ -48,7 +48,7 @@ def _has_col(df, options):
 def render(user: dict):
     role = user.get("role", "researcher")
     if role not in ALLOWED_ROLES:
-        st.error("🚫 You don't have permission to access this page.")
+        st.error("You don't have permission to access this page.")
         return
 
     st.markdown("## LinkedIn Enricher")
@@ -146,14 +146,14 @@ def render(user: dict):
             proc = subprocess.Popen(cmd, cwd=str(_PROJECT_ROOT))
 
         st.session_state["enr_out_path"] = str(out_path)
-        st.success(f"✅ Enricher launched (PID {proc.pid}). A browser window will open. "
+        st.success(f"Enricher launched (PID {proc.pid}). A browser window will open. "
                    "Come back and load the results below once it finishes.")
 
     # ── Step 4: results ───────────────────────────────────────────────────────
     out_path = st.session_state.get("enr_out_path")
     if out_path:
         st.markdown("### 4. Results")
-        if st.button("↻ Load / refresh results"):
+        if st.button("Load / refresh results"):
             pass  # triggers rerun
         if os.path.exists(out_path):
             try:
@@ -162,7 +162,7 @@ def render(user: dict):
                 res = pd.DataFrame()
             if len(res):
                 st.warning(
-                    "⚠ **Web-search matches — verify before trusting.** These profiles "
+                    "**Web-search matches — verify before trusting.** These profiles "
                     "were found by search ranking, not confirmed on LinkedIn. Give any "
                     "**probable** / **needs_manual** rows (and company-only results) a "
                     "quick eyeball before use."
@@ -171,7 +171,7 @@ def render(user: dict):
                     counts = res["match_confidence"].value_counts().to_dict()
                     st.write(" | ".join(f"**{k}**: {v}" for k, v in counts.items()))
                 st.dataframe(res, use_container_width=True, hide_index=True)
-                st.download_button("⬇ Download results CSV",
+                st.download_button("Download results CSV",
                                    res.to_csv(index=False).encode("utf-8-sig"),
                                    file_name="linkedin_enriched.csv", mime="text/csv")
             else:

@@ -116,7 +116,7 @@ def render(user: dict, allow_delete: bool = False, allow_mark_stable: bool = Fal
     if expiring:
         domains_str = ", ".join(p["domain"] for p in expiring[:5])
         st.warning(
-            f"⚠️ **{len(expiring)} fragile pattern(s) expiring within 7 days:** {domains_str}"
+            f"**{len(expiring)} fragile pattern(s) expiring within 7 days:** {domains_str}"
         )
 
     # ── Filters ───────────────────────────────────────────────────────
@@ -156,7 +156,7 @@ def render(user: dict, allow_delete: bool = False, allow_mark_stable: bool = Fal
         with st.expander(
             f"{p['domain']}  —  {st_type.upper()}  ·  "
             f"Quality: {int((p.get('quality_score') or 0)*100)}%  ·  "
-            f"✓{succ} ✗{fail}  ·  last ok: {last_ok}",
+            f"{succ}{fail}  ·  last ok: {last_ok}",
             expanded=False
         ):
             col_info, col_actions = st.columns([3, 1])
@@ -181,14 +181,14 @@ def render(user: dict, allow_delete: bool = False, allow_mark_stable: bool = Fal
 
             with col_actions:
                 # Re-learn button — available to all
-                if st.button("🔄 Re-learn", key=f"relearn_{p['domain']}"):
+                if st.button("Re-learn", key=f"relearn_{p['domain']}"):
                     expire_pattern(p["domain"])
                     st.success(f"Pattern cleared. Next scrape of {p['domain']} will re-analyse.")
                     st.rerun()
 
                 # Delete — super_admin only
                 if allow_delete:
-                    if st.button("🗑 Delete", key=f"del_{p['domain']}"):
+                    if st.button("Delete", key=f"del_{p['domain']}"):
                         try:
                             from core.db import get_connection
                             conn = get_connection()
@@ -209,7 +209,7 @@ def render(user: dict, allow_delete: bool = False, allow_mark_stable: bool = Fal
                     notes_key = f"stable_notes_{p['domain']}"
                     note_val = st.text_input("Note (why stable?)", key=notes_key,
                                              placeholder="e.g. Manually verified 2026-01")
-                    if st.button("✅ Mark Stable", key=f"stable_{p['domain']}"):
+                    if st.button("Mark Stable", key=f"stable_{p['domain']}"):
                         mark_pattern_stable(p["domain"], note_val)
                         st.success(f"{p['domain']} marked as STABLE.")
                         st.rerun()

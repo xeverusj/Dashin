@@ -3,14 +3,14 @@ app.py — Dashin Research Platform V2
 Entry point. Run with: streamlit run app.py
 
 Roles and their nav:
-  super_admin       → Super Admin panel + all internal views
-  org_admin         → All internal views + Admin panel
-  manager           → Scraper, Inventory, Campaigns, Estimator, Research queue
-  research_manager  → Research queue, Research manager view, Inventory
-  campaign_manager  → Campaign manager view, Campaigns
-  researcher        → Research queue, Inventory (own leads only)
-  client_admin      → Full client portal
-  client_user       → Full client portal
+  super_admin       · Super Admin panel + all internal views
+  org_admin         · All internal views + Admin panel
+  manager           · Scraper, Inventory, Campaigns, Estimator, Research queue
+  research_manager  · Research queue, Research manager view, Inventory
+  campaign_manager  · Campaign manager view, Campaigns
+  researcher        · Research queue, Inventory (own leads only)
+  client_admin      · Full client portal
+  client_user       · Full client portal
 """
 
 import os
@@ -19,7 +19,7 @@ import subprocess
 import logging
 from pathlib import Path
 
-# Force UTF-8 stdout/stderr so emoji in startup prints (e.g. core/db.py's "✅")
+# Force UTF-8 stdout/stderr so emoji in startup prints (e.g. core/db.py's "")
 # don't crash the app under a Windows cp1252 console. Harmless on Linux/Mac.
 for _stream in (sys.stdout, sys.stderr):
     try:
@@ -66,7 +66,7 @@ def _check_committed_secrets():
                     "Rotate your ANTHROPIC_API_KEY immediately at https://console.anthropic.com"
                 )
                 print(
-                    "\n⚠️  SECURITY WARNING: .env may have been committed to git history.\n"
+                    "\nSECURITY WARNING: .env may have been committed to git history.\n"
                     "   Rotate your ANTHROPIC_API_KEY at: https://console.anthropic.com\n"
                 )
         except Exception:
@@ -77,7 +77,7 @@ _check_committed_secrets()
 # ── PAGE CONFIG ───────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title  = "Dashin Research",
-    page_icon   = "⚡",
+    page_icon   = "",
     layout      = "wide",
     initial_sidebar_state = "expanded",
 )
@@ -238,34 +238,34 @@ section[data-testid="stSidebar"] .stRadio input:checked + div {
 
 
 # ── NAV DEFINITIONS ───────────────────────────────────────────────────────────
-# Maps display label → page key → which roles can see it
+# Maps display label · page key · which roles can see it
 
 NAV_ITEMS = [
     # (label, page_key, allowed_roles)
-    ("⚡  Platform",         "superadmin",   {"super_admin"}),
-    ("🔍  Smart Scraper",    "scraper",      {"super_admin","org_admin","manager","researcher"}),
-    ("📦  Inventory",        "inventory",    {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("🔬  Research Queue",   "research",     {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("📋  Research Manager", "res_manager",  {"super_admin","org_admin","manager","research_manager"}),
-    ("🚀  Campaigns",        "campaigns",    {"super_admin","org_admin","manager","campaign_manager"}),
-    ("📊  Campaign Manager", "camp_manager", {"super_admin","org_admin","manager","campaign_manager"}),
-    ("💰  Estimator",        "estimator",    {"super_admin","org_admin","manager"}),
-    ("🎯  Enrichment",       "enrichment",   {"super_admin","org_admin","manager","researcher"}),
-    ("🧮  AI Scoring",       "scoring",      {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("🔗  LinkedIn Enricher","enricher",     {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("📧  Email Match",      "email_match",  {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("📤  Outreach",         "outreach",     {"super_admin","org_admin","manager","researcher"}),
-    ("📊  Report Builder",   "report_builder", {"super_admin","org_admin","manager","campaign_manager"}),
-    ("⚙️  Admin",            "admin",        {"super_admin","org_admin"}),
+    ("Platform",         "superadmin",   {"super_admin"}),
+    ("Smart Scraper",    "scraper",      {"super_admin","org_admin","manager","researcher"}),
+    ("Inventory",        "inventory",    {"super_admin","org_admin","manager","research_manager","researcher"}),
+    ("Research Queue",   "research",     {"super_admin","org_admin","manager","research_manager","researcher"}),
+    ("Research Manager", "res_manager",  {"super_admin","org_admin","manager","research_manager"}),
+    ("Campaigns",        "campaigns",    {"super_admin","org_admin","manager","campaign_manager"}),
+    ("Campaign Manager", "camp_manager", {"super_admin","org_admin","manager","campaign_manager"}),
+    ("Estimator",        "estimator",    {"super_admin","org_admin","manager"}),
+    ("Enrichment",       "enrichment",   {"super_admin","org_admin","manager","researcher"}),
+    ("AI Scoring",       "scoring",      {"super_admin","org_admin","manager","research_manager","researcher"}),
+    ("LinkedIn Enricher","enricher",     {"super_admin","org_admin","manager","research_manager","researcher"}),
+    ("Email Match",      "email_match",  {"super_admin","org_admin","manager","research_manager","researcher"}),
+    ("Outreach",         "outreach",     {"super_admin","org_admin","manager","researcher"}),
+    ("Report Builder",   "report_builder", {"super_admin","org_admin","manager","campaign_manager"}),
+    ("Admin",            "admin",        {"super_admin","org_admin"}),
 ]
 
 CLIENT_NAV_ITEMS = [
-    ("🏠  Home",             "client_home"),
-    ("👥  My Leads",         "client_leads"),
-    ("📁  Campaigns",        "client_campaigns"),
-    ("📊  Campaign Report",  "client_report"),
-    ("📎  Files",            "client_files"),
-    ("💬  Notes",            "client_notes"),
+    ("Home",             "client_home"),
+    ("My Leads",         "client_leads"),
+    ("Campaigns",        "client_campaigns"),
+    ("Campaign Report",  "client_report"),
+    ("Files",            "client_files"),
+    ("Notes",            "client_notes"),
 ]
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
@@ -314,7 +314,7 @@ def render_sidebar(user: dict) -> str:
         client_name    = user.get("client_name", "")
         display_context = client_name if is_client else org_name
 
-        notif_badge = f' <span class="sb-notif">🔔 {unread} new</span>' if unread > 0 else ""
+        notif_badge = f' <span class="sb-notif">{unread} new</span>' if unread > 0 else ""
         org_line = f'<div class="sb-org">{display_context}</div>' if display_context else ""
         st.markdown(
             f'<div class="sb-user">'
@@ -349,6 +349,12 @@ def render_sidebar(user: dict) -> str:
             st.session_state["page"] = nav_keys[0]
 
         current_idx  = nav_keys.index(st.session_state["page"])
+        # Monochrome nav icons via CSS mask, keyed to the actual render order.
+        from core.icons import nav_icon_css
+        st.markdown(
+            nav_icon_css(nav_keys, 'section[data-testid="stSidebar"] div[role="radiogroup"]'),
+            unsafe_allow_html=True,
+        )
         choice       = st.radio(
             "Navigation",
             nav_labels,
@@ -384,7 +390,7 @@ def render_sidebar(user: dict) -> str:
 
         # Theme toggle — dark is the default; light is optional.
         _cur = st.session_state.get("ui_theme", "dark")
-        _label = "☀  Light mode" if _cur == "dark" else "🌙  Dark mode"
+        _label = "Light mode" if _cur == "dark" else "Dark mode"
         if st.button(_label, use_container_width=True, key="theme_toggle"):
             st.session_state["ui_theme"] = "light" if _cur == "dark" else "dark"
             st.rerun()
@@ -558,13 +564,13 @@ def route(page: str, user: dict):
 
 
 def _access_denied():
-    st.error("🚫 You don't have permission to access this page.")
+    st.error("You don't have permission to access this page.")
 
 
 def _dashboard_error(name: str, err: Exception):
     import traceback
     logging.exception(f"[app] {name} dashboard error: {err}")
-    st.error(f"⚠ {name} dashboard failed to load.")
+    st.error(f"{name} dashboard failed to load.")
     with st.expander("Error details"):
         st.code(str(err))
     with st.expander("Traceback"):

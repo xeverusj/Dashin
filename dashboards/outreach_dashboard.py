@@ -2,9 +2,9 @@
 dashboards/outreach_dashboard.py — Dashin Research Platform
 
 Outreach Pipeline Dashboard — 3 tabs:
-  Tab 1  "From LinkedIn"   → contact selection with title scoring
-  Tab 2  "Upload & Enrich" → CSV upload or enrich staged contacts via Claude
-  Tab 3  "Inventory"       → view / export all outreach_contacts
+  Tab 1  "From LinkedIn"   · contact selection with title scoring
+  Tab 2  "Upload & Enrich" · CSV upload or enrich staged contacts via Claude
+  Tab 3  "Inventory"       · view / export all outreach_contacts
 
 Reuses the enrichment engine from enrichment_dashboard.py (same 2-pass Claude
 pipeline, same Playwright crawling, same prompts).
@@ -142,7 +142,7 @@ def _tier_badge(tier: str) -> str:
 # ── Sales Navigator CSV column mapping ────────────────────────────────────────
 
 SN_COLUMN_MAP = {
-    # Sales Nav export columns → our standard names
+    # Sales Nav export columns · our standard names
     "first name":    "first_name",
     "last name":     "last_name",
     "full name":     "full_name",
@@ -191,8 +191,8 @@ def _render_tab_from_linkedin(user: dict):
 
     st.markdown("### Contact Selection & Title Scoring")
     st.markdown(
-        "Upload a Sales Navigator CSV export (or any people list) → "
-        "auto-score titles → pick the best 1-2 contacts per company → stage for enrichment."
+        "Upload a Sales Navigator CSV export (or any people list) · "
+        "auto-score titles · pick the best 1-2 contacts per company · stage for enrichment."
     )
 
     uploaded = st.file_uploader(
@@ -233,7 +233,7 @@ def _render_tab_from_linkedin(user: dict):
     c4.metric("Tier 3",  int((df["_tier"] == "tier_3").sum()))
     c5.metric("Rejected", int((df["_tier"] == "reject").sum()))
 
-    # Group by company → show expander per company with contacts
+    # Group by company · show expander per company with contacts
     st.markdown("---")
     st.markdown("### Select contacts per company")
     st.caption(
@@ -345,7 +345,7 @@ def _render_tab_enrich(user: dict):
     st.markdown("### Enrich Staged Contacts")
     st.markdown(
         "Runs the 2-pass Claude pipeline on staged contacts: "
-        "scrape website → extract intelligence → generate hook."
+        "scrape website · extract intelligence · generate hook."
     )
 
     # AI budget check
@@ -502,7 +502,7 @@ def _run_enrichment_pipeline(staged: list[dict], org_id: int, user_id: int):
     progress_bar = st.progress(0)
     status_text  = st.empty()
     total = len(companies)
-    enrichment_cache = {}  # domain → result dict
+    enrichment_cache = {}  # domain · result dict
 
     _DESKTOP_UA = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -771,7 +771,7 @@ def _render_tab_inventory(user: dict):
     with col_e3:
         st.caption("**Mark as exported**")
         enriched_ids = list(filtered[filtered["status"] == "enriched"]["id"])
-        if enriched_ids and st.button(f"Mark {len(enriched_ids)} enriched → exported"):
+        if enriched_ids and st.button(f"Mark {len(enriched_ids)} enriched · exported"):
             conn = get_connection()
             try:
                 conn.executemany(

@@ -32,7 +32,7 @@ Every route returns the same per-company result shape:
       "rationale":         str,
       "best_contact":      str,     # suggestion, "" if none
       "contradiction":     bool,    # site text contradicts the stated industry
-      "not_site_verified": bool,    # crawl was thin/blocked/failed → scored on
+      "not_site_verified": bool,    # crawl was thin/blocked/failed · scored on
                                     #   whatever text existed; treat with caution
       "model":             str,
       "error":             str,     # "" on success
@@ -137,7 +137,7 @@ def delete_profile(profile_id: int, org_id: int) -> None:
 def normalize_domain(url_or_domain: str) -> str:
     """
     Reduce a URL or messy domain string to a bare host for matching, e.g.
-    'https://www.Acme.io/about?x=1' → 'acme.io'. Used to match re-imported GPT
+    'https://www.Acme.io/about?x=1' · 'acme.io'. Used to match re-imported GPT
     scores back to the right company regardless of URL formatting.
     """
     if not url_or_domain:
@@ -522,7 +522,7 @@ def cross_validate(results_a: list, results_b: list, disagree_threshold: int = 2
             disagree = delta > disagree_threshold
         else:
             delta = None
-            disagree = True  # only one model scored it → worth a human glance
+            disagree = True  # only one model scored it · worth a human glance
         merged.append({
             "domain": d,
             "company_name": a.get("company_name") or b.get("company_name") or d,

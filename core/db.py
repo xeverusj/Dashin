@@ -12,7 +12,7 @@ from pathlib import Path
 
 # ── ROLE DEFINITIONS PER ORG TYPE ─────────────────────────────────────────────
 # Used by access_control.py and admin dashboard Add User form.
-# Maps org_type → list of valid roles assignable within that org.
+# Maps org_type · list of valid roles assignable within that org.
 ROLES_BY_ORG_TYPE = {
     'dashin':    ['super_admin', 'org_admin', 'manager'],
     'agency':    ['org_admin', 'manager', 'research_manager',
@@ -663,7 +663,7 @@ def init_db():
     )""")
 
     # ══════════════════════════════════════════════════════════════════
-    # FREELANCER → CLIENT ASSIGNMENTS
+    # FREELANCER · CLIENT ASSIGNMENTS
     # ══════════════════════════════════════════════════════════════════
 
     c.execute("""
@@ -930,7 +930,7 @@ def init_db():
     )""")
 
     # ══════════════════════════════════════════════════════════════════
-    # API TOKENS (desktop scraper → dashboard ingest, org-scoped)
+    # API TOKENS (desktop scraper · dashboard ingest, org-scoped)
     # ══════════════════════════════════════════════════════════════════
     # The desktop scraper authenticates its pushes with a per-org token. We store
     # only a SHA-256 hash of the token; the raw value is shown to the admin once
@@ -1008,7 +1008,7 @@ def init_db():
 
     conn.commit()
     conn.close()
-    print(f"✅ Dashin V2 database ready at {DB_PATH}")
+    print(f"Dashin V2 database ready at {DB_PATH}")
 
 
 def migrate_db():
@@ -1317,7 +1317,7 @@ def migrate_db():
 
     conn.commit()
     conn.close()
-    print(f"✅ Migration complete — {added} columns added")
+    print(f"Migration complete — {added} columns added")
 
 
 def ensure_defaults():

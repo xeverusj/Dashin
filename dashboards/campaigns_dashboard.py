@@ -3,7 +3,7 @@ dashboards/campaigns_dashboard.py — Dashin Research Platform
 Campaign Builder. Manager / Org Admin scope.
 - Create campaigns + link to clients
 - Add enriched leads from inventory
-- Mark campaign "Ready to View" → notifies client
+- Mark campaign "Ready to View" · notifies client
 - View campaign status
 - Export campaign data
 """
@@ -41,7 +41,7 @@ def render(user: dict):
     </div>
     """, unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["📁 All Campaigns", "➕ New Campaign"])
+    tab1, tab2 = st.tabs(["All Campaigns", "New Campaign"])
 
     with tab1:
         _render_campaign_list(org_id, user_id, user)
@@ -75,7 +75,7 @@ def _render_campaign_list(org_id: int, user_id: int, user: dict):
     conn.close()
 
     if not campaigns:
-        st.info("No campaigns yet. Create your first one →")
+        st.info("No campaigns yet. Create your first one")
         return
 
     # Filter
@@ -118,11 +118,11 @@ def _render_campaign_card(camp, org_id: int, user_id: int, user: dict):
                 <div class="camp-client">{camp.get('client_name','No client')}</div>
                 <div class="camp-title">{camp['name']}</div>
                 <div class="camp-meta">
-                    📅 Created {(camp['created_at'] or '')[:10]} ·
-                    👤 {camp.get('created_by_name','?')} ·
-                    🎯 {leads}/{target or '?'} leads ·
-                    📧 {camp.get('with_email',0)} emails ·
-                    📅 {camp.get('meetings',0)} meetings
+                    Created {(camp['created_at'] or '')[:10]} ·
+                    {camp.get('created_by_name','?')} ·
+                    {leads}/{target or '?'} leads ·
+                    {camp.get('with_email',0)} emails ·
+                    {camp.get('meetings',0)} meetings
                 </div>
             </div>
             <span class="status-badge s-{status}">{status}</span>
@@ -134,7 +134,7 @@ def _render_campaign_card(camp, org_id: int, user_id: int, user: dict):
     if visible:
         st.markdown(f"""
         <div class="ready-banner">
-            ✅ <b>Visible to client</b> since
+            <b>Visible to client</b> since
             {(camp.get('marked_ready_at') or '')[:10]}
         </div>
         """, unsafe_allow_html=True)
@@ -150,14 +150,14 @@ def _render_campaign_card(camp, org_id: int, user_id: int, user: dict):
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        if st.button("👁 Manage",
+        if st.button("Manage",
                      key=f"manage_{camp['id']}",
                      use_container_width=True):
             st.session_state[f"open_camp"] = camp["id"]
 
     with col2:
         if not visible and can_mark_campaign_ready(user):
-            if st.button("🚀 Mark Ready",
+            if st.button("Mark Ready",
                          key=f"ready_{camp['id']}",
                          use_container_width=True,
                          type="primary"):
@@ -192,9 +192,9 @@ def _render_campaign_manager(campaign_id: int, org_id: int,
     st.markdown(f"#### Managing: {camp['name']}")
 
     t1, t2, t3 = st.tabs([
-        f"👥 Leads ({camp['lead_count']})",
-        "➕ Add Leads",
-        "⬇ Export",
+        f"Leads ({camp['lead_count']})",
+        "Add Leads",
+        "Export",
     ])
 
     with t1:
@@ -245,7 +245,7 @@ def _render_campaign_leads(campaign_id: int, org_id: int):
         "Company": l.get("company",""),
         "Title":   l.get("title",""),
         "Persona": l.get("persona",""),
-        "Email":   "✓" if (l.get("email") and "@" in (l["email"] or "")) else "—",
+        "Email":   "" if (l.get("email") and "@" in (l["email"] or "")) else "—",
         "Status":  (l.get("crm_status") or "new").replace("_"," ").title(),
         "Reused":  "Yes" if l["is_reused"] else "No",
     } for l in leads])
@@ -332,7 +332,7 @@ def _render_add_leads(campaign_id: int, org_id: int, camp):
         "Company": l.get("company",""),
         "Title":   l.get("title",""),
         "Persona": l.get("persona",""),
-        "Email":   "✓" if (l.get("email") and "@" in (l["email"] or "")) else "—",
+        "Email":   "" if (l.get("email") and "@" in (l["email"] or "")) else "—",
         "ID":      l["id"],
     } for l in available])
 
@@ -400,7 +400,7 @@ def _render_export(campaign_id: int, campaign_name: str):
     with col1:
         st.metric("Total Leads", len(all_df))
         st.download_button(
-            "⬇ All Leads CSV",
+            "All Leads CSV",
             data=all_df.to_csv(index=False),
             file_name=f"{campaign_name}_all.csv",
             mime="text/csv",
@@ -409,7 +409,7 @@ def _render_export(campaign_id: int, campaign_name: str):
     with col2:
         st.metric("Email Found", len(email_df))
         st.download_button(
-            "⬇ Email Found CSV",
+            "Email Found CSV",
             data=email_df.to_csv(index=False),
             file_name=f"{campaign_name}_emails.csv",
             mime="text/csv",
