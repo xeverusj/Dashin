@@ -1,0 +1,21 @@
+# Keep the image small and avoid shipping local junk / secrets.
+.git
+.claude
+.venv
+venv
+__pycache__
+**/__pycache__
+*.pyc
+dashin-cf
+data/system/sessions
+data/backups
+data/system/*.db
+data/system/*.db-wal
+data/system/*.db-shm
+*.csv
+.env
+sample_*.pdf
+deploy/*.local
+dist
+build_pyi
+*.spec.bak

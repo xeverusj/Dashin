@@ -1,0 +1,76 @@
+# Environment & secrets
+.env
+*.env
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Data files (may contain PII / scraped data)
+data/system/sessions/
+data/system/leads_master.csv
+data/system/companies_master.csv
+data/system/layout_patterns.json
+data/backups/
+
+# Legacy V1 data directory — contains scraped PII
+data_system/
+
+# Archives
+*.zip
+*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Failed save logs
+failed_db_saves.json
+fix_log.txt
+
+# Cloud deploy — keep structure, ignore data files
+data/system/*.csv
+data/system/*.db
+data/system/*.db-shm
+data/system/*.db-wal
+data/system/sessions/
+*.checkpoint
+!data/.gitkeep
+!data/system/.gitkeep
+!data/system/sessions/.gitkeep
+
+# Bundles and local artifacts
+*.bundle
+
+# Old subfolder (now flattened to root)
+app to test with Jan/
+
+# Local tooling / agent
+.claude/
+
+# PyInstaller build outputs (rebuilt per-machine; can be hundreds of MB)
+dist/
+build_pyi/
+build/
+*.manifest
+
+# Abandoned Cloudflare rewrite — not part of the deploying app.
+# Remove this line if you want to keep it in the repo.
+dashin-cf/
+
+# Generated sample/report artifacts
+sample_*.pdf

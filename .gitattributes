@@ -1,0 +1,9 @@
+# Normalize line endings. Critical: files that run on the Linux VPS must stay LF
+# (CRLF breaks shell scripts → "bad interpreter: bash\r"). Windows .bat stays CRLF.
+* text=auto
+
+*.sh            text eol=lf
+*.template      text eol=lf
+Dockerfile      text eol=lf
+*.py            text eol=lf
+*.bat           text eol=crlf
