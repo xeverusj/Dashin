@@ -16,12 +16,15 @@ PORT=8000 HOST=127.0.0.1 python api_server.py &
 API_PID=$!
 
 # 2. Streamlit dashboard (background) — internal port, fronted by nginx.
+# XSRF protection stays ON: the browser reaches Streamlit same-origin through
+# nginx (wss://domain/_stcore/stream), so CSRF protection works normally. Only
+# the internal bind address is localhost; nginx forwards the upgrade headers.
 streamlit run app.py \
     --server.port 8501 \
     --server.address 127.0.0.1 \
     --server.headless true \
-    --server.enableCORS false \
-    --server.enableXsrfProtection false &
+    --server.enableXsrfProtection true \
+    --server.enableCORS true &
 ST_PID=$!
 
 # 3. nginx (foreground) — single public entrypoint. Render the port into config.

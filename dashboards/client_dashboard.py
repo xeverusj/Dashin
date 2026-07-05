@@ -5,6 +5,7 @@ Tabs: Home · All Leads · Campaigns · Files & Templates · Notes
 """
 
 import html
+import re
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timezone, date
@@ -696,29 +697,35 @@ def _render_lead_table(leads: list, show_email: bool,
     # Render table
     rows_html = ""
     for r in leads:
+        # All values below originate from scraped/uploaded data (attacker-
+        # influenceable) and are rendered into the CLIENT-facing portal, so every
+        # field is HTML-escaped and URLs are scheme-checked to prevent stored XSS.
         status  = r.get("crm_status","") or "new"
-        pill    = f'<span class="status-pill s-{status}">{status.replace("_"," ").title()}</span>'
+        status_key = re.sub(r"[^a-z0-9_-]", "", status.lower())
+        pill    = f'<span class="status-pill s-{status_key}">{html.escape(status.replace("_"," ").title())}</span>'
         email   = r.get("email","") or ""
-        email_cell = (f'<a href="mailto:{email}" style="color:var(--info);">{email}</a>'
+        email_esc = html.escape(email, quote=True)
+        email_cell = (f'<a href="mailto:{email_esc}" style="color:var(--info);">{html.escape(email)}</a>'
                       if show_email and "@" in email else
                       '<span style="color:var(--text-3);">—</span>')
         li_url  = r.get("linkedin_url","") or ""
-        li_cell = (f'<a href="{li_url}" target="_blank" '
+        li_safe = li_url if li_url.lower().startswith(("http://", "https://")) else ""
+        li_cell = (f'<a href="{html.escape(li_safe, quote=True)}" target="_blank" rel="noopener noreferrer" '
                    f'style="color:#0077B5;">LinkedIn</a>'
-                   if li_url else "—")
+                   if li_safe else "—")
         meeting = r.get("meeting_date","") or ""
-        meet_cell = f'{meeting[:10]}' if meeting else ""
+        meet_cell = html.escape(meeting[:10]) if meeting else ""
 
         rows_html += f"""
         <tr>
-            <td><b>{r['full_name']}</b><br>
-                <small style="color:var(--text-3);">{r.get('company','')}</small></td>
-            <td style="font-size:12px;color:var(--text-2);">{r.get('title','')}</td>
+            <td><b>{html.escape(r.get('full_name','') or '')}</b><br>
+                <small style="color:var(--text-3);">{html.escape(r.get('company','') or '')}</small></td>
+            <td style="font-size:12px;color:var(--text-2);">{html.escape(r.get('title','') or '')}</td>
             <td>{pill}{f'<br><small style="color:var(--success);">{meet_cell}</small>' if meet_cell else ''}</td>
             <td>{email_cell}</td>
             <td>{li_cell}</td>
-            <td style="font-size:12px;color:var(--text-3);">{r.get('country','')}</td>
-            <td style="font-size:12px;color:var(--text-3);">{r.get('campaign_name','')}</td>
+            <td style="font-size:12px;color:var(--text-3);">{html.escape(r.get('country','') or '')}</td>
+            <td style="font-size:12px;color:var(--text-3);">{html.escape(r.get('campaign_name','') or '')}</td>
         </tr>
         """
 

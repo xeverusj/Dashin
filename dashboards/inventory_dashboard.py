@@ -256,10 +256,21 @@ def check_client_conflicts(lead_ids, client_id):
 # ── DETAIL PANEL ──────────────────────────────────────────────────────────────
 
 def render_detail_panel(lead, user):
+    # Escape all lead-derived fields — scraped/uploaded data is attacker-
+    # influenceable and must not inject markup/script into a staff session.
+    import html as _html
+    _esc = lambda v: _html.escape(str(v)) if v not in (None, "") else "—"
+    _name = _esc(lead.get('full_name'))
+    _title = _esc(lead.get('title')); _company = _esc(lead.get('company_name'))
+    _email = _esc(lead.get('email')); _country = _esc(lead.get('country'))
+    _industry = _esc(lead.get('enriched_industry')); _size = _esc(lead.get('company_size'))
+    _liurl = lead.get('linkedin_url') or ""
+    _li = (f'<a href="{_html.escape(_liurl, quote=True)}" target="_blank" rel="noopener noreferrer">View</a>'
+           if _liurl.lower().startswith(("http://", "https://")) else "—")
     st.markdown(f"""
     <div class="detail-panel">
-      <div class="detail-name">{lead['full_name']}</div>
-      <div class="detail-sub">{lead.get('title') or '—'} · {lead.get('company_name') or '—'}</div>
+      <div class="detail-name">{_name}</div>
+      <div class="detail-sub">{_title} · {_company}</div>
       <div class="detail-grid">
         <div class="detail-field">
           <div class="detail-field-label">Status</div>
@@ -271,23 +282,23 @@ def render_detail_panel(lead, user):
         </div>
         <div class="detail-field">
           <div class="detail-field-label">Email</div>
-          <div class="detail-field-val">{lead.get('email') or '—'}</div>
+          <div class="detail-field-val">{_email}</div>
         </div>
         <div class="detail-field">
           <div class="detail-field-label">LinkedIn</div>
-          <div class="detail-field-val">{('<a href="'+lead['linkedin_url']+'" target="_blank">View</a>') if lead.get('linkedin_url') else '—'}</div>
+          <div class="detail-field-val">{_li}</div>
         </div>
         <div class="detail-field">
           <div class="detail-field-label">Country</div>
-          <div class="detail-field-val">{lead.get('country') or '—'}</div>
+          <div class="detail-field-val">{_country}</div>
         </div>
         <div class="detail-field">
           <div class="detail-field-label">Industry</div>
-          <div class="detail-field-val">{lead.get('enriched_industry') or '—'}</div>
+          <div class="detail-field-val">{_industry}</div>
         </div>
         <div class="detail-field">
           <div class="detail-field-label">Company Size</div>
-          <div class="detail-field-val">{lead.get('company_size') or '—'}</div>
+          <div class="detail-field-val">{_size}</div>
         </div>
         <div class="detail-field">
           <div class="detail-field-label">Times Seen</div>

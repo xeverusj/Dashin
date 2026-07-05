@@ -570,11 +570,16 @@ def _access_denied():
 def _dashboard_error(name: str, err: Exception):
     import traceback
     logging.exception(f"[app] {name} dashboard error: {err}")
-    st.error(f"{name} dashboard failed to load.")
-    with st.expander("Error details"):
-        st.code(str(err))
-    with st.expander("Traceback"):
-        st.code(traceback.format_exc())
+    st.error(f"{name} dashboard failed to load. Please try again or contact support.")
+    # Only internal staff (never clients) see error internals — avoids leaking
+    # code paths / query fragments to client-portal users.
+    user = st.session_state.get("user", {})
+    role = user.get("role", "")
+    if role in ("super_admin", "org_admin", "manager", "research_manager",
+                "campaign_manager", "researcher"):
+        with st.expander("Error details (staff only)"):
+            st.code(str(err))
+            st.code(traceback.format_exc())
 
 
 # ── LOGIN / SIGNUP ────────────────────────────────────────────────────────────

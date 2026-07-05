@@ -293,13 +293,13 @@ def get_researcher_kpis(org_id: int, researcher_id: int,
     week_start = ISO date string, or None for all-time.
     """
     conn = get_connection()
-    date_filter = f"AND a.assigned_at >= '{week_start}'" if week_start else ""
 
-    # 1. Leads assigned vs completed
+    # 1. Leads assigned vs completed — parameterized (no value interpolated into SQL)
     assigned = conn.execute(f"""
         SELECT COUNT(*) AS c FROM tasks
-        WHERE org_id=? AND assigned_to=? {date_filter.replace('a.','') }
-    """, (org_id, researcher_id)).fetchone()["c"]
+        WHERE org_id=? AND assigned_to=?
+          {'AND assigned_at >= ?' if week_start else ''}
+    """, (org_id, researcher_id) + ((week_start,) if week_start else ())).fetchone()["c"]
 
     completed = conn.execute(f"""
         SELECT COUNT(*) AS c FROM tasks

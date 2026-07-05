@@ -10,6 +10,7 @@ Kept as plain functions; each opens/closes its own connection.
 """
 
 from core.db import get_connection
+from core import crypto
 
 
 # ── Email accounts ────────────────────────────────────────────────────────────
@@ -21,7 +22,13 @@ def list_email_accounts(org_id: int, client_id: int) -> list:
             """SELECT * FROM client_email_accounts
                WHERE org_id=? AND client_id=? ORDER BY created_at DESC""",
             (org_id, client_id)).fetchall()
-        return [dict(r) for r in rows]
+        out = []
+        for r in rows:
+            d = dict(r)
+            # Passwords are stored encrypted at rest; decrypt for display.
+            d["password"] = crypto.decrypt(d.get("password", ""))
+            out.append(d)
+        return out
     finally:
         conn.close()
 
@@ -36,7 +43,8 @@ def add_email_account(org_id: int, client_id: int, email_address: str,
                (org_id, client_id, label, email_address, password, provider,
                 webmail_url, created_by)
                VALUES (?,?,?,?,?,?,?,?)""",
-            (org_id, client_id, label.strip(), email_address.strip(), password,
+            (org_id, client_id, label.strip(), email_address.strip(),
+             crypto.encrypt(password),   # encrypt at rest — never store plaintext
              provider.strip(), webmail_url.strip(), created_by))
         conn.commit()
         return cur.lastrowid
