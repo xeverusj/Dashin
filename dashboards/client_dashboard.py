@@ -29,15 +29,16 @@ STYLES = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lato:wght@300;400;700&display=swap');
 
-.stApp { background: var(--surface); font-family: 'Lato', sans-serif; }
-section[data-testid="stSidebar"] { background: var(--text-1) !important; }
-section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
+.stApp { background: var(--bg); font-family: 'Lato', sans-serif; }
+section[data-testid="stSidebar"] { background: var(--surface) !important; border-right: 1px solid var(--border) !important; }
+section[data-testid="stSidebar"] * { color: var(--text-2) !important; }
 
+/* Branded violet banner — fixed gradient so it reads on both light and dark. */
 .portal-header {
-    background: linear-gradient(135deg, var(--text-1) 0%, #2C2A27 60%, #3D3A35 100%);
+    background: linear-gradient(135deg, #3D1FA3 0%, #5B2EE5 55%, #7C5CF6 100%);
     border-radius: 12px;
     padding: 28px 32px;
-    color: var(--surface-2);
+    color: #F0EEF7;
     margin-bottom: 28px;
     position: relative;
     overflow: hidden;
@@ -47,7 +48,7 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
     position: absolute;
     top: -40px; right: -40px;
     width: 180px; height: 180px;
-    background: rgba(201,169,110,0.08);
+    background: rgba(255,255,255,0.10);
     border-radius: 50%;
 }
 .portal-client-name {
@@ -59,9 +60,9 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 }
 .portal-badge {
     display: inline-block;
-    background: rgba(201,169,110,0.2);
-    color: var(--accent);
-    border: 1px solid rgba(201,169,110,0.3);
+    background: rgba(255,255,255,0.18);
+    color: #F0EEF7;
+    border: 1px solid rgba(255,255,255,0.30);
     padding: 3px 12px;
     border-radius: 20px;
     font-size: 11px;
@@ -72,13 +73,13 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 }
 .portal-icp {
     font-size: 13px;
-    color: var(--text-3);
+    color: rgba(240,238,247,0.82);
     max-width: 500px;
     line-height: 1.5;
 }
 
 .home-stat {
-    background: white;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px;
@@ -101,7 +102,7 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 }
 
 .camp-progress-card {
-    background: white;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 20px 24px;
@@ -126,11 +127,11 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 }
 .chip-active   { background: var(--success-bg); color: var(--success); }
 .chip-building { background: var(--info-bg); color: var(--info); }
-.chip-paused   { background: var(--surface-2); color: #E65100; }
-.chip-ready    { background: var(--success-border); color: #1B5E20; }
+.chip-paused   { background: var(--surface-2); color: var(--warning); }
+.chip-ready    { background: var(--success-border); color: var(--success); }
 
 .meeting-card {
-    background: linear-gradient(135deg, var(--success-bg) 0%, #F1F8E9 100%);
+    background: linear-gradient(135deg, var(--success-bg) 0%, var(--success-bg) 100%);
     border: 1px solid var(--success-border);
     border-radius: 8px;
     padding: 14px 18px;
@@ -173,18 +174,18 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
     font-size: 11px;
     font-weight: 600;
 }
-.s-booked            { background:var(--success-border); color:#1B5E20; }
-.s-interested        { background:#E1F5FE; color:#01579B; }
-.s-meeting_requested { background:var(--surface-2); color:#E65100; }
+.s-booked            { background:var(--success-border); color:var(--success); }
+.s-interested        { background:var(--info-bg); color:var(--info); }
+.s-meeting_requested { background:var(--surface-2); color:var(--warning); }
 .s-responded         { background:var(--success-bg); color:var(--success); }
-.s-waiting           { background:#FFF9C4; color:#827717; }
+.s-waiting           { background:var(--warning-bg); color:var(--warning); }
 .s-contacted         { background:var(--info-bg); color:var(--info); }
-.s-not_interested    { background:#FFCDD2; color:#B71C1C; }
-.s-enriched          { background:#F3E5F5; color:#4A148C; }
+.s-not_interested    { background:var(--error-bg); color:var(--error); }
+.s-enriched          { background:var(--purple-bg); color:var(--purple); }
 .s-no_email          { background:var(--surface-2); color:var(--text-3); }
 
 .file-card {
-    background: white;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px 18px;
@@ -197,12 +198,12 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 .file-name { font-weight: 600; font-size: 13px; }
 .file-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
-.approval-pending  { color: #E65100; }
+.approval-pending  { color: var(--warning); }
 .approval-approved { color: var(--success); }
 .approval-rejected { color: var(--error); }
 
 .note-card {
-    background: white;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px 18px;
@@ -210,7 +211,7 @@ section[data-testid="stSidebar"] * { color: var(--surface-2) !important; }
 }
 .note-author { font-weight: 700; font-size: 13px; }
 .note-role   { font-size: 11px; color: var(--accent); font-style: italic; }
-.note-text   { font-size: 13px; color: #333; margin-top: 8px; line-height: 1.6; }
+.note-text   { font-size: 13px; color: var(--text-2); margin-top: 8px; line-height: 1.6; }
 .note-time   { font-size: 11px; color: var(--text-3); margin-top: 6px; }
 </style>
 """

@@ -205,7 +205,7 @@ def _render_this_week(org_id: int, week_start: str, week_end: str):
             """
 
         st.markdown(f"""
-        <div style="background:white;border:1px solid #E8E6E1;
+        <div style="background:var(--surface);border:1px solid var(--border);
                     border-radius:8px;padding:16px 20px;">
             {rows_html}
         </div>

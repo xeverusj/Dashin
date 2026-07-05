@@ -20,7 +20,7 @@ from services.site_learning_service import (
 # ── STYLE ─────────────────────────────────────────────────────────────────────
 CSS = """
 <style>
-.lib-stat{background:#fff;border:1px solid var(--border);border-radius:10px;
+.lib-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:16px 20px;text-align:center;flex:1;min-width:110px}
 .lib-stat-val{font-size:26px;font-weight:700;color:var(--text-1)}
 .lib-stat-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1.2px;margin-top:3px}

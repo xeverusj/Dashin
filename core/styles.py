@@ -868,6 +868,7 @@ _DARK_VARS = """
 
     --success: #34d399; --success-bg: rgba(52,211,153,0.14); --success-border: rgba(52,211,153,0.30);
     --error:   #fb7185; --error-bg:   rgba(251,113,133,0.14); --error-border:  rgba(251,113,133,0.30);
+    --warning: #fbbf24; --warning-bg: rgba(251,191,36,0.14);  --warning-border: rgba(251,191,36,0.30);
     --info:    #8e74f8; --info-bg:    rgba(142,116,248,0.12); --info-border:   rgba(142,116,248,0.24);
     --purple:  #8e74f8; --purple-bg:  rgba(142,116,248,0.14); --purple-border: rgba(142,116,248,0.30);
 
@@ -899,6 +900,7 @@ _LIGHT_VARS = """
 
     --success: #0e7c6c; --success-bg: rgba(14,124,108,0.10); --success-border: rgba(14,124,108,0.24);
     --error:   #c0362c; --error-bg:   rgba(192,54,44,0.09);  --error-border:  rgba(192,54,44,0.22);
+    --warning: #b45309; --warning-bg: rgba(180,83,9,0.10);   --warning-border: rgba(180,83,9,0.22);
     --info:    #5b2ee5; --info-bg:    rgba(91,46,229,0.06);  --info-border:   rgba(91,46,229,0.18);
     --purple:  #5b2ee5; --purple-bg:  rgba(91,46,229,0.08);  --purple-border: rgba(91,46,229,0.20);
 
