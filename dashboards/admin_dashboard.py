@@ -80,10 +80,11 @@ def render(user: dict):
 
     tier_label = (org["tier"] or "starter").title()
 
+    from core import icons
     st.markdown(f"""
     <div class="admin-header">
         <div>
-            <div class="admin-title">{org['name']}</div>
+            <div class="admin-title" style="display:flex;align-items:center;gap:10px">{icons.icon("settings", 22, "var(--accent)")}{org['name']}</div>
             <div class="admin-sub">Admin Panel · {tier_label} Plan</div>
         </div>
         <div>

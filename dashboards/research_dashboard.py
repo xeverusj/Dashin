@@ -80,10 +80,11 @@ def render(user: dict):
     ).isoformat()
 
     # ── Header ───────────────────────────────────────────────────────
+    from core import icons
     st.markdown(f"""
     <div class="rq-header">
         <div>
-            <div class="rq-header-title">Research Queue</div>
+            <div class="rq-header-title" style="display:flex;align-items:center;gap:10px">{icons.icon("research", 22, "var(--accent)")}Research Queue</div>
             <div class="rq-header-sub">
                 {user['name']} · {date.today().strftime('%A, %d %b %Y')}
             </div>

@@ -370,7 +370,8 @@ def render(user: dict):
         st.error("You don't have permission to access this page.")
         return
 
-    st.markdown("## Account Intelligence Enrichment")
+    from core import icons
+    st.markdown(icons.header("target", "Account Intelligence Enrichment"), unsafe_allow_html=True)
     st.markdown(
         "Upload a company list · scrape websites · AI classification · "
         "fit scoring · hook generation · download Instantly-ready CSV."

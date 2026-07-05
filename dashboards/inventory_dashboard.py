@@ -1806,7 +1806,9 @@ def render(user):
                 st.rerun()
         return
 
-    st.markdown('<div class="page-title">Inventory</div>', unsafe_allow_html=True)
+    from core import icons
+    st.markdown(f'<div class="page-title" style="display:flex;align-items:center;gap:12px">'
+                f'{icons.icon("inventory", 30, "var(--accent)")}Inventory</div>', unsafe_allow_html=True)
     st.markdown('<div class="page-sub">Your global lead database — browse, filter, archive, and check client conflicts.</div>', unsafe_allow_html=True)
 
     # Stats — use access control layer for org visibility

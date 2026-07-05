@@ -45,7 +45,8 @@ def render(user: dict):
         st.error("You don't have permission to access this page.")
         return
 
-    st.markdown("## AI Scoring — use your own AI")
+    from core import icons
+    st.markdown(icons.header("scoring", "AI Scoring — use your own AI"), unsafe_allow_html=True)
     st.markdown(
         "Score any crawled company list against **your own** scoring guide. "
         "No API key needed — the judgement runs in whatever AI you already use "

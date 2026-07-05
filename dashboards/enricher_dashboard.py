@@ -51,7 +51,8 @@ def render(user: dict):
         st.error("You don't have permission to access this page.")
         return
 
-    st.markdown("## LinkedIn Enricher")
+    from core import icons
+    st.markdown(icons.header("link", "LinkedIn Enricher"), unsafe_allow_html=True)
     st.markdown(
         "Find LinkedIn profiles by **web search** — no LinkedIn login, no cookies. "
         "A visible browser window does the searching (solve a CAPTCHA yourself on "

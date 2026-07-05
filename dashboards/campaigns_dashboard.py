@@ -34,9 +34,10 @@ def render(user: dict):
     org_id  = user["org_id"]
     user_id = user["id"]
 
+    from core import icons
     st.markdown(f"""
     <div class="cb-header">
-        <div class="cb-title">Campaigns</div>
+        <div class="cb-title" style="display:flex;align-items:center;gap:10px">{icons.icon("campaign", 22, "var(--accent)")}Campaigns</div>
         <div class="cb-sub">{user['name']} · {date.today().strftime('%d %b %Y')}</div>
     </div>
     """, unsafe_allow_html=True)

@@ -795,7 +795,8 @@ def render(user: dict):
         st.error("You don't have permission to access this page.")
         return
 
-    st.markdown("## Outreach Pipeline")
+    from core import icons
+    st.markdown(icons.header("outreach", "Outreach Pipeline"), unsafe_allow_html=True)
 
     tab1, tab2, tab3 = st.tabs([
         "From LinkedIn",

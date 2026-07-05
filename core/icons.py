@@ -73,6 +73,17 @@ def icon(name: str, size: int = 16, color: str = "currentColor",
     )
 
 
+def header(icon_name: str, title: str) -> str:
+    """A page header: accent line-icon + display-font title. For dashboards that
+    render their title with `st.markdown("## ...")` — pass this with
+    unsafe_allow_html=True instead."""
+    ic = icon(icon_name, size=26, color="var(--accent)")
+    return (f'<div style="display:flex;align-items:center;gap:12px;margin:0 0 14px;">'
+            f'{ic}<span style="font-family:var(--font-display);font-size:26px;'
+            f'font-weight:700;letter-spacing:-0.02em;color:var(--text-1);'
+            f'line-height:1.15;">{title}</span></div>')
+
+
 def mask_uri(name: str) -> str:
     """
     Return a `data:` URI for the named icon, for use as a CSS mask-image. The

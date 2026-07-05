@@ -45,9 +45,10 @@ def render(user: dict):
     week_end   = (today - timedelta(days=today.weekday()) +
                   timedelta(days=6)).isoformat()
 
+    from core import icons
     st.markdown(f"""
     <div class="est-header">
-        <div class="est-title">Cost Estimator</div>
+        <div class="est-title" style="display:flex;align-items:center;gap:10px">{icons.icon("estimator", 22, "var(--accent)")}Cost Estimator</div>
         <div class="est-sub">
             Week of {week_start} ·
             Organisation: {user.get('org_name','?')}

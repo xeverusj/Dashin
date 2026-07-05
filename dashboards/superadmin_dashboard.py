@@ -52,12 +52,13 @@ def render(user: dict):
     # ── Theme — reads shared key set by app.py sidebar toggle ─────────
     dark = st.session_state.get("dark_mode", False)
     # Inject dashboard-specific component styles (org cards, tier chips, etc.)
+    from core import icons
 
     st.markdown(f"""
     <div class="sa-header">
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <div>
-                <div class="sa-title">Dashin Platform</div>
+                <div class="sa-title" style="display:flex;align-items:center;gap:10px">{icons.icon("platform", 22, "var(--accent)")}Dashin Platform</div>
                 <div class="sa-sub">Super Admin · {date.today().strftime('%d %b %Y')}</div>
             </div>
             <span class="sa-badge">Super Admin</span>

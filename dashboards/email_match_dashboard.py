@@ -40,7 +40,8 @@ def render(user: dict):
         st.error("You don't have permission to access this page.")
         return
 
-    st.markdown("## Email List Matching")
+    from core import icons
+    st.markdown(icons.header("mail", "Email List Matching"), unsafe_allow_html=True)
     st.markdown(
         "Upload an email list and it attaches each address to the matching lead "
         "already in your inventory — by name, by the email's implied name, or by "

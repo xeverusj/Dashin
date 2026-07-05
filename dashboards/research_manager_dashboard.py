@@ -39,10 +39,11 @@ def render(user: dict):
     today      = date.today()
     week_start = (today - timedelta(days=today.weekday())).isoformat()
 
+    from core import icons
     st.markdown(f"""
     <div class="rm-header">
         <div>
-            <div class="rm-title">Research Manager</div>
+            <div class="rm-title" style="display:flex;align-items:center;gap:10px">{icons.icon("clipboard", 22, "var(--accent)")}Research Manager</div>
             <div class="rm-sub">
                 {user['name']} · Week of {week_start}
             </div>

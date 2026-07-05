@@ -276,7 +276,9 @@ def render(user: dict = None):
     from core.styles import inject_shared_css
     inject_shared_css()
 
-    st.markdown('<div class="page-title">Smart Scraper</div>', unsafe_allow_html=True)
+    from core import icons
+    st.markdown(f'<div class="page-title" style="display:flex;align-items:center;gap:12px">'
+                f'{icons.icon("search", 30, "var(--accent)")}Smart Scraper</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="page-sub">Launch a scraping session on any event directory. '
         'Claude AI identifies the page structure automatically.</div>',
