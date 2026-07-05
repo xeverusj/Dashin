@@ -46,23 +46,24 @@ def render(user: dict):
         return
 
     from core import icons
-    st.markdown(icons.header("scoring", "AI Scoring — use your own AI"), unsafe_allow_html=True)
+    st.markdown(icons.header("scoring", "AI Scoring"), unsafe_allow_html=True)
     st.markdown(
-        "Score any crawled company list against **your own** scoring guide. "
-        "No API key needed — the judgement runs in whatever AI you already use "
-        "(ChatGPT, Claude, Gemini…). You paste the guide, we prepare the batch, "
-        "your AI scores it, and you paste the scores back."
+        "Score any crawled company list against your own qualification criteria "
+        "using the AI model of your choice. Define the criteria, generate a scoring "
+        "batch, run it through your preferred model, and import the ranked results — "
+        "no API keys stored and no per-scoring cost."
     )
 
     # ── Step 1: paste the scoring guide ───────────────────────────────────────
     st.markdown("### 1. Paste your scoring guide")
     st.caption(
-        "First, ask your own AI how to score this batch. A prompt that works well:\n\n"
-        "> *“I'm prospecting [type of company] for [purpose]. Write me a scoring "
+        "Define how companies should be qualified. You can draft this with your "
+        "preferred AI model using a prompt like:\n\n"
+        "> *“I'm prospecting [type of company] for [purpose]. Write a scoring "
         "guide with: a hard gate (must-haves to qualify at all), what should raise "
         "the score, and disqualifiers that should drop it to near zero.”*\n\n"
-        "Paste whatever it gives you into the box below — it's used verbatim, so "
-        "you stay in full control of how companies are judged."
+        "The guide is applied verbatim, so you retain full control over how "
+        "companies are judged."
     )
     guide = st.text_area(
         "Your scoring guide",
@@ -106,8 +107,8 @@ def render(user: dict):
     companies = _to_companies(df)
     st.success(f"Loaded **{len(companies)}** companies.")
 
-    # ── Step 3: generate the bundle for their AI ──────────────────────────────
-    st.markdown("### 3. Generate the batch for your AI")
+    # ── Step 3: generate the bundle for the external model ────────────────────
+    st.markdown("### 3. Generate the scoring batch")
     if not guide.strip():
         st.info("Paste your scoring guide in step 1 to enable this.")
     else:
@@ -121,27 +122,27 @@ def render(user: dict):
 
         if st.session_state.get("scoring_prompt_txt"):
             st.markdown(
-                "**How to run it in your AI:**\n"
+                "**How to run it:**\n"
                 "1. Download both files below.\n"
-                "2. Open your AI (ChatGPT, Claude, …), paste the **prompt**, and attach or "
-                "paste the **data CSV**.\n"
-                "3. Your AI returns a CSV with `domain, score, tier, rationale, best_contact, "
-                "contradiction`. Save it.\n"
-                "4. Upload that scored CSV in step 4."
+                "2. Open your AI model (ChatGPT, Claude, Gemini, …), paste the **prompt**, "
+                "and attach the **data CSV**.\n"
+                "3. The model returns a CSV with `domain, score, tier, rationale, "
+                "best_contact, contradiction`. Save it.\n"
+                "4. Import that scored CSV in step 4."
             )
             c1, c2 = st.columns(2)
             with c1:
-                st.download_button("Prompt (paste into your AI)",
+                st.download_button("Prompt (paste into the model)",
                                    st.session_state["scoring_prompt_txt"],
                                    file_name="scoring_prompt.txt", mime="text/plain")
             with c2:
-                st.download_button("Data CSV (attach to your AI)",
+                st.download_button("Data CSV (attach to the model)",
                                    st.session_state["scoring_csv_bytes"],
                                    file_name="scoring_input.csv", mime="text/csv")
 
     # ── Step 4: re-import the scores ──────────────────────────────────────────
-    st.markdown("### 4. Upload the scores your AI produced")
-    scored = st.file_uploader("Scored CSV (from your AI)", type=["csv"], key="scoring_scored")
+    st.markdown("### 4. Import the scored results")
+    scored = st.file_uploader("Scored CSV (from your model)", type=["csv"], key="scoring_scored")
     if scored:
         tmp = os.path.join(tempfile.gettempdir(), "dashin_scored_upload.csv")
         with open(tmp, "wb") as f:
