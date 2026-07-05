@@ -15,6 +15,7 @@ import os
 import base64
 import hashlib
 import logging
+import secrets as _secrets
 
 try:
     from cryptography.fernet import Fernet
@@ -23,19 +24,66 @@ except Exception:
     _AVAILABLE = False
 
 _PREFIX = "enc:v1:"
-_warned = False
+_cached_secret = None
+
+
+def _secret_file():
+    """Keyfile path — kept next to the DB so it lives on the persistent volume
+    and survives restarts (the key MUST stay stable or encrypted data is lost)."""
+    try:
+        from core.db import DB_PATH
+        return DB_PATH.parent / ".dashin_secret"
+    except Exception:
+        return None
+
+
+def _get_secret() -> str:
+    """
+    Resolve the encryption secret, in priority order:
+      1. DASHIN_SECRET_KEY env var (production — set by the operator)
+      2. a persisted keyfile on the data volume (auto-managed)
+      3. generate a strong key once, persist it to the keyfile, and use it
+    This means there is never a hardcoded/insecure fallback, and no manual setup
+    is required for it to be secure out of the box.
+    """
+    global _cached_secret
+    if _cached_secret:
+        return _cached_secret
+
+    env = os.environ.get("DASHIN_SECRET_KEY", "").strip()
+    if env:
+        _cached_secret = env
+        return env
+
+    path = _secret_file()
+    if path is not None:
+        try:
+            if path.exists():
+                _cached_secret = path.read_text(encoding="utf-8").strip()
+                if _cached_secret:
+                    return _cached_secret
+            # Generate once and persist with restrictive permissions.
+            path.parent.mkdir(parents=True, exist_ok=True)
+            gen = _secrets.token_urlsafe(48)
+            path.write_text(gen, encoding="utf-8")
+            try:
+                os.chmod(path, 0o600)
+            except Exception:
+                pass
+            logging.info("[crypto] generated a new persistent encryption key at %s", path)
+            _cached_secret = gen
+            return gen
+        except Exception as e:
+            logging.warning("[crypto] could not read/write keyfile (%s) — "
+                            "falling back to a process-random key for this run", e)
+
+    # Last resort (e.g. read-only FS): a random key for this process only.
+    _cached_secret = _secrets.token_urlsafe(48)
+    return _cached_secret
 
 
 def _fernet():
-    global _warned
-    secret = os.environ.get("DASHIN_SECRET_KEY", "").strip()
-    if not secret:
-        if not _warned:
-            logging.warning("[crypto] DASHIN_SECRET_KEY not set — using an insecure "
-                            "development key. Set DASHIN_SECRET_KEY in production.")
-            _warned = True
-        secret = "dashin-dev-insecure-key-change-me"
-    key = base64.urlsafe_b64encode(hashlib.sha256(secret.encode()).digest())
+    key = base64.urlsafe_b64encode(hashlib.sha256(_get_secret().encode()).digest())
     return Fernet(key)
 
 

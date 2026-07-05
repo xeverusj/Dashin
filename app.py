@@ -640,13 +640,6 @@ def _render_login_form():
         else:
             st.error("Invalid email or password, or account is inactive.")
 
-    st.markdown(
-        '<p style="text-align:center;font-size:11px;color:#BBB;margin-top:12px;">'
-        'Default: admin@dashin.com / admin123'
-        '</p>',
-        unsafe_allow_html=True
-    )
-
 
 def _render_signup(token: str):
     """Self-serve signup form shown when following an invite link."""

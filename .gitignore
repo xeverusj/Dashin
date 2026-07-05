@@ -74,3 +74,7 @@ dashin-cf/
 
 # Generated sample/report artifacts
 sample_*.pdf
+
+# Auto-generated encryption keyfile — never commit
+.dashin_secret
+**/.dashin_secret
