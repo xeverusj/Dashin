@@ -838,6 +838,19 @@ div[data-testid="stFileUploadDropzone"]:hover {
     color: var(--text-3);
     word-break: break-all;
 }
+
+/* ── PROTECT STREAMLIT'S MATERIAL ICONS ──────────────────────────────────────
+   Our global font-family overrides (incl. the sidebar `*` rule) otherwise force
+   icon glyphs to render as their ligature text (e.g. "keyboard_double_arrow_left"
+   on the sidebar collapse button). Restore the icon font on those elements. */
+[data-testid="stIconMaterial"],
+span[data-testid="stIconMaterial"],
+.material-icons, .material-icons-outlined, .material-icons-round,
+.material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp,
+[data-testid="stSidebar"] [data-testid="stIconMaterial"] {
+    font-family: 'Material Symbols Rounded', 'Material Symbols Outlined',
+                 'Material Icons Round', 'Material Icons' !important;
+}
 </style>
 """
 
