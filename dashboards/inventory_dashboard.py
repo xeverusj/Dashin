@@ -76,15 +76,18 @@ def get_stats(org_id=None, user=None):
         org_clause = ""
         org_param  = []
 
+    # NOTE: alias the table as `l` — get_visible_leads_query() returns a clause
+    # that references `l.org_id`. Without the alias the stats queries error and
+    # every metric silently shows 0.
     for s in ["new","assigned","in_progress","enriched","used","archived"]:
         row = conn.execute(
-            f"SELECT COUNT(*) AS cnt FROM leads WHERE status=? {org_clause}",
+            f"SELECT COUNT(*) AS cnt FROM leads l WHERE l.status=? {org_clause}",
             [s] + org_param
         ).fetchone()
         out[s] = (row if isinstance(row, dict) else (dict(row) if row else {})).get("cnt") or 0
     out["total"] = sum(out.values())
     row2 = conn.execute(
-        f"SELECT COUNT(*) AS cnt FROM leads WHERE status='enriched' {org_clause}",
+        f"SELECT COUNT(*) AS cnt FROM leads l WHERE l.status='enriched' {org_clause}",
         org_param
     ).fetchone()
     out["reusable"] = (row2 if isinstance(row2, dict) else (dict(row2) if row2 else {})).get("cnt") or 0
