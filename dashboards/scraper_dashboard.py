@@ -597,6 +597,84 @@ def render(user: dict = None):
                 )
                 st.rerun()
 
+    # ── Company Crawler ───────────────────────────────────────────────
+    # A second collection tool on the same page: instead of scraping an event
+    # directory for people, it crawls a list of COMPANY websites (or a Crunchbase
+    # export) and gathers the site text used for research + AI Scoring. No AI cost.
+    st.markdown('<hr class="sb-div" style="margin:34px 0 18px">', unsafe_allow_html=True)
+    st.markdown(f'<div class="sec-header" style="display:flex;align-items:center;gap:10px">'
+                f'{icons.icon("target", 20, "var(--accent)")}Company Crawler</div>',
+                unsafe_allow_html=True)
+    st.markdown(
+        '<div class="page-sub">Gather company intelligence from their websites — and from '
+        'Crunchbase exports. Crawls each company URL for the text used in research and '
+        '<b>AI Scoring</b>. Runs on your machine, no AI cost.</div>',
+        unsafe_allow_html=True,
+    )
+
+    cr_file = st.file_uploader(
+        "Company list CSV — needs a website/URL column (Crunchbase exports work as-is)",
+        type=["csv"], key="crawler_csv")
+    if cr_file is not None:
+        try:
+            cr_df = pd.read_csv(cr_file)
+        except Exception as e:
+            st.error(f"Could not read CSV: {e}")
+            cr_df = None
+        if cr_df is not None:
+            _norm = {str(c).strip().lower(): c for c in cr_df.columns}
+            wcol = next((_norm[w] for w in
+                         ("website", "url", "domain", "company_domain", "company_website")
+                         if w in _norm), None)
+            if not wcol:
+                st.error("No website/URL column found (looked for: website, url, domain, "
+                         "company_domain, company_website).")
+            else:
+                st.success(f"Loaded **{len(cr_df)}** companies. Website column: `{wcol}`.")
+                if st.button("Start crawl", type="primary", key="crawler_go"):
+                    jobs = _PROJECT_ROOT / "data" / "system" / "crawl_jobs"
+                    jobs.mkdir(parents=True, exist_ok=True)
+                    jid = f"crawl_{int(time.time())}"
+                    cin, cout = jobs / f"{jid}_input.csv", jobs / f"{jid}_crawled.csv"
+                    cr_df.to_csv(cin, index=False)
+                    ccmd = [sys.executable, str(_PROJECT_ROOT / "score_csv.py"), str(cin), str(cout)]
+                    if sys.platform == "win32":
+                        bat = jobs / f"{jid}_run.bat"
+                        args = " ".join(f'"{c}"' for c in ccmd[1:])
+                        with open(bat, "w") as bf:
+                            bf.write("@echo off\n")
+                            bf.write("echo   Dashin Company Crawler\n")
+                            bf.write("echo   Crawling company websites for intelligence...\n")
+                            bf.write(f'cd /d "{_PROJECT_ROOT}"\n')
+                            bf.write(f'"{ccmd[0]}" {args}\n')
+                            bf.write("echo.\necho   Crawl finished - output is ready for AI Scoring.\npause\n")
+                        cproc = subprocess.Popen(["cmd", "/c", "start", "Dashin Crawler", str(bat)],
+                                                 cwd=str(_PROJECT_ROOT))
+                    else:
+                        cproc = subprocess.Popen(ccmd, cwd=str(_PROJECT_ROOT))
+                    st.session_state["last_crawl_out"] = str(cout)
+                    st.success(f"Crawl started (PID {cproc.pid}). A window opens and crawls each "
+                               "site. When it finishes, load the result below — it's ready to upload "
+                               "to **AI Scoring**.")
+
+    crawl_out = st.session_state.get("last_crawl_out")
+    if crawl_out:
+        st.button("Load / refresh crawl result", key="crawler_refresh")
+        if os.path.exists(crawl_out):
+            try:
+                rdf = pd.read_csv(crawl_out)
+                if "crawl_status" in rdf.columns:
+                    counts = ", ".join(f"{k}={v}" for k, v in rdf["crawl_status"].value_counts().items())
+                    st.caption(f"Crawled {len(rdf)} companies · {counts}")
+                st.download_button("Download crawled CSV (feed to AI Scoring)",
+                                   rdf.to_csv(index=False).encode("utf-8-sig"),
+                                   file_name="crawled_companies.csv", mime="text/csv",
+                                   key="crawler_dl")
+            except Exception:
+                st.info("Crawl still running — refresh in a moment.")
+        else:
+            st.info("Crawl running — its output will appear here when ready.")
+
     # ── Recent sessions table ─────────────────────────────────────────
     st.markdown('<div class="sec-header">Recent Sessions</div>', unsafe_allow_html=True)
 

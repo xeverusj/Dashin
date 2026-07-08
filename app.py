@@ -240,24 +240,54 @@ section[data-testid="stSidebar"] .stRadio input:checked + div {
 # ── NAV DEFINITIONS ───────────────────────────────────────────────────────────
 # Maps display label · page key · which roles can see it
 
+# Ordered by workflow, grouped into sections. `group` is the section header that
+# renders above the FIRST visible item of each section (see nav_group_css()).
 NAV_ITEMS = [
-    # (label, page_key, allowed_roles)
-    ("Platform",         "superadmin",   {"super_admin"}),
-    ("Smart Scraper",    "scraper",      {"super_admin","org_admin","manager","researcher"}),
-    ("Inventory",        "inventory",    {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("Research Queue",   "research",     {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("Research Manager", "res_manager",  {"super_admin","org_admin","manager","research_manager"}),
-    ("Campaigns",        "campaigns",    {"super_admin","org_admin","manager","campaign_manager"}),
-    ("Campaign Manager", "camp_manager", {"super_admin","org_admin","manager","campaign_manager"}),
-    ("Estimator",        "estimator",    {"super_admin","org_admin","manager"}),
-    ("Enrichment",       "enrichment",   {"super_admin","org_admin","manager","researcher"}),
-    ("AI Scoring",       "scoring",      {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("LinkedIn Enricher","enricher",     {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("Email Match",      "email_match",  {"super_admin","org_admin","manager","research_manager","researcher"}),
-    ("Outreach",         "outreach",     {"super_admin","org_admin","manager","researcher"}),
-    ("Report Builder",   "report_builder", {"super_admin","org_admin","manager","campaign_manager"}),
-    ("Admin",            "admin",        {"super_admin","org_admin"}),
+    # (label, page_key, allowed_roles, group)
+    ("Smart Scraper",    "scraper",      {"super_admin","org_admin","manager","researcher"}, "Scrape & Collect"),
+
+    ("Inventory",        "inventory",    {"super_admin","org_admin","manager","research_manager","researcher"}, "Lead Inventory"),
+    ("Research Queue",   "research",     {"super_admin","org_admin","manager","research_manager","researcher"}, "Lead Inventory"),
+    ("Research Manager", "res_manager",  {"super_admin","org_admin","manager","research_manager"}, "Lead Inventory"),
+
+    ("Enrichment",       "enrichment",   {"super_admin","org_admin","manager","researcher"}, "Enrichment"),
+    ("AI Scoring",       "scoring",      {"super_admin","org_admin","manager","research_manager","researcher"}, "Enrichment"),
+    ("LinkedIn Enricher","enricher",     {"super_admin","org_admin","manager","research_manager","researcher"}, "Enrichment"),
+    ("Email Match",      "email_match",  {"super_admin","org_admin","manager","research_manager","researcher"}, "Enrichment"),
+
+    ("Campaigns",        "campaigns",    {"super_admin","org_admin","manager","campaign_manager"}, "Campaigns"),
+    ("Campaign Manager", "camp_manager", {"super_admin","org_admin","manager","campaign_manager"}, "Campaigns"),
+    ("Outreach",         "outreach",     {"super_admin","org_admin","manager","researcher"}, "Campaigns"),
+    ("Report Builder",   "report_builder", {"super_admin","org_admin","manager","campaign_manager"}, "Campaigns"),
+    ("Estimator",        "estimator",    {"super_admin","org_admin","manager"}, "Campaigns"),
+
+    ("Platform",         "superadmin",   {"super_admin"}, "Administration"),
+    ("Admin",            "admin",        {"super_admin","org_admin"}, "Administration"),
 ]
+
+
+def nav_group_css(visible, selector_prefix):
+    """
+    Emit a <style> that renders an uppercase section header above the FIRST
+    visible item of each group. Uses the radio label's ::after (icons use
+    ::before) so both coexist. `visible` is the role-filtered list of
+    (label, key, group) in render order.
+    """
+    css = ["<style>"]
+    seen = set()
+    for i, (_lbl, _key, grp) in enumerate(visible, start=1):
+        if not grp or grp in seen:
+            continue
+        seen.add(grp)
+        sel = f'{selector_prefix} label[data-baseweb="radio"]:nth-of-type({i})'
+        top = "10px" if i == 1 else "26px"
+        css.append(
+            f'{sel}{{margin-top:{top} !important;position:relative;overflow:visible;}}'
+            f'{sel}::after{{content:"{grp}";position:absolute;top:-15px;left:2px;'
+            f'font-size:9.5px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;'
+            f'color:var(--text-3);opacity:0.65;pointer-events:none;white-space:nowrap;}}')
+    css.append("</style>")
+    return "\n".join(css)
 
 CLIENT_NAV_ITEMS = [
     ("Home",             "client_home"),
@@ -332,8 +362,8 @@ def render_sidebar(user: dict) -> str:
             nav_labels = [item[0] for item in CLIENT_NAV_ITEMS]
             nav_keys   = [item[1] for item in CLIENT_NAV_ITEMS]
         else:
-            visible    = [(label, key)
-                          for label, key, roles in NAV_ITEMS
+            visible    = [(label, key, group)
+                          for label, key, roles, group in NAV_ITEMS
                           if role in roles]
             nav_labels = [item[0] for item in visible]
             nav_keys   = [item[1] for item in visible]
@@ -351,10 +381,11 @@ def render_sidebar(user: dict) -> str:
         current_idx  = nav_keys.index(st.session_state["page"])
         # Monochrome nav icons via CSS mask, keyed to the actual render order.
         from core.icons import nav_icon_css
-        st.markdown(
-            nav_icon_css(nav_keys, 'section[data-testid="stSidebar"] div[role="radiogroup"]'),
-            unsafe_allow_html=True,
-        )
+        _navsel = 'section[data-testid="stSidebar"] div[role="radiogroup"]'
+        st.markdown(nav_icon_css(nav_keys, _navsel), unsafe_allow_html=True)
+        # Section headers above the first item of each group (internal nav only).
+        if not is_client:
+            st.markdown(nav_group_css(visible, _navsel), unsafe_allow_html=True)
         choice       = st.radio(
             "Navigation",
             nav_labels,
